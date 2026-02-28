@@ -1,0 +1,6 @@
+@_13_MyAcademy_JWT_Identity_HostAddress = http://localhost:5124
+
+GET {{_13_MyAcademy_JWT_Identity_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
