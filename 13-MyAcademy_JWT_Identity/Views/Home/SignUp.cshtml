@@ -1,0 +1,163 @@
+@{
+    ViewData["Title"] = "Sign Up";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <title>Sign Up | Bepop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="/bepop/assets/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/style.css" type="text/css" />
+</head>
+<body class="layout-row bg-dark">
+<div class="d-flex flex-column flex">
+    <div class="row no-gutters h-100">
+        <div class="col-md-6 bg-dark bg-img" style="background-image:url(/bepop/assets/img/b4.jpg)">
+            <div class="p-3 p-md-5 d-flex flex-column h-100">
+                <h4 class="mb-3 text-white">Bepop</h4>
+                <div class="text-fade">Music Web Application</div>
+                <div class="d-flex flex align-items-center justify-content-center"></div>
+                <div class="d-flex text-sm text-fade">
+                    <a asp-controller="Home" asp-action="Index" class="text-white">About</a>
+                    <span class="flex"></span>
+                    <a href="#" class="text-white mx-1">Terms</a>
+                    <a href="#" class="text-white mx-1">Policy</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" id="content-body">
+            <div class="p-3 p-md-5">
+                <h5>Create Account</h5>
+                <p><small class="text-muted">Join Bepop and start exploring music</small></p>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="regName" class="form-control" placeholder="Enter full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="regEmail" class="form-control" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="regPassword" class="form-control" placeholder="Password">
+                        <small class="form-text text-muted">En az 6 karakter, bir büyük harf, bir küçük harf ve bir rakam içermelidir.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="regConfirm" class="form-control" placeholder="Confirm password">
+                    </div>
+                    <div class="checkbox mb-3">
+                        <label class="ui-check"><input type="checkbox"><i></i> I agree to the terms</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-4">Create Account</button>
+                    <div>Already have an account? <a asp-controller="Home" asp-action="SignIn" class="text-primary">Sign in</a></div>
+                    <div id="registerError" class="text-danger mt-2" style="display:none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/bepop/libs/jquery/dist/jquery.min.js"></script>
+<script src="/bepop/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#registerForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var name = $('#regName').val().trim();
+        var email = $('#regEmail').val().trim();
+        var password = $('#regPassword').val();
+        var confirm = $('#regConfirm').val();
+        var $submitBtn = $(this).find('button[type="submit"]');
+        
+        if (!name || !email || !password || !confirm) {
+            $('#registerError').text('Lütfen tüm alanlarý doldurun.').show();
+            return;
+        }
+        
+        if (email.indexOf('@@') === -1 || email.indexOf('.') === -1) {
+            $('#registerError').text('Geçerli bir email adresi girin.').show();
+            return;
+        }
+        
+        if (password !== confirm) {
+            $('#registerError').text('Þifreler eþleþmiyor.').show();
+            return;
+        }
+        
+        if (password.length < 6) {
+            $('#registerError').text('Þifre en az 6 karakter olmalýdýr.').show();
+            return;
+        }
+        
+        $submitBtn.prop('disabled', true).text('Kayýt yapýlýyor...');
+        $('#registerError').hide();
+        
+        $.ajax({
+            url: '/api/users/register',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                userName: name,
+                email: email,
+                password: password
+            }),
+            success: function(response) {
+                $submitBtn.text('Baþarýlý! Yönlendiriliyor...');
+                setTimeout(function() {
+                    window.location.href = '/Home/SignIn?registered=true';
+                }, 1000);
+            },
+            error: function(xhr) {
+                var errorMsg = 'Kayýt iþlemi baþarýsýz.';
+                
+                if (xhr.status === 400 && xhr.responseJSON) {
+                    if (Array.isArray(xhr.responseJSON)) {
+                        var errors = xhr.responseJSON.map(function(e) {
+                            return e.description || e.code;
+                        }).join('. ');
+                        errorMsg = errors || 'Þifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir.';
+                    } else if (xhr.responseJSON.errors) {
+                        var errors = xhr.responseJSON.errors;
+                        errorMsg = '';
+                        for (var key in errors) {
+                            errorMsg += errors[key].join(', ') + ' ';
+                        }
+                    }
+                } else if (xhr.responseText) {
+                    try {
+                        var errorArray = JSON.parse(xhr.responseText);
+                        if (Array.isArray(errorArray)) {
+                            errorMsg = errorArray.map(function(e) { 
+                                return e.description || e.message; 
+                            }).join('. ');
+                        }
+                    } catch (err) {
+                        if (xhr.responseText.length < 200) {
+                            errorMsg = xhr.responseText;
+                        }
+                    }
+                }
+                
+                $('#registerError').html(errorMsg).show();
+                $submitBtn.prop('disabled', false).text('Create Account');
+            }
+        });
+    });
+    
+    $('#registerForm input').on('input', function() {
+        $('#registerError').hide();
+    });
+    
+    var token = localStorage.getItem('jwtToken');
+    if (token) {
+        window.location.href = '/Home/Discover';
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] | Bepop - Music Web Application</title>
+    <meta name="description" content="Bepop Müzik Platformu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <!-- Bepop CSS -->
+    <link rel="stylesheet" href="/bepop/libs/slick-carousel/slick/slick.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/libs/slick-carousel/slick/slick-theme.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/style.css" type="text/css" />
+    <style>
+        /* Auth UI initial state - hide everything until JS decides */
+        #userMenu, #loginLink, #registerLink {
+            display: none !important;
+        }
+        /* Auth states controlled by JS */
+        #userMenu.auth-show { display: block !important; }
+        #loginLink.auth-show { display: block !important; }
+        #registerLink.auth-show { display: flex !important; }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body class="layout-column bg-dark">
+    <header id="header" class="page-header scroll-header fixed">
+        <div class="navbar navbar-expand-lg">
+            <!-- brand -->
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand text-white">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="#000"></circle>
+                    <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1"></circle>
+                    <g class="loading-spin" stroke="currentColor" stroke-width="1" style="transform-origin: 12px 12px">
+                        <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+                    </g>
+                </svg>
+                <span class="hidden-folded d-inline l-s-n-1x">Bepop</span>
+            </a>
+            <!-- Navbar collapse -->
+            <div class="collapse navbar-collapse order-2 order-lg-1" id="navbarCollapse">
+                <ul class="navbar-nav" data-nav>
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Discover" class="nav-link">
+                            <span class="nav-text">Discover</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Artists" class="nav-link">
+                            <span class="nav-text">Artists</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Albums" class="nav-link">
+                            <span class="nav-text">Albums</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Packages" class="nav-link">
+                            <span class="nav-text">Packages</span>
+                        </a>
+                    </li>
+                </ul>
+                <form class="input-group m-2 my-lg-0">
+                    <span class="input-group-prepend">
+                        <button type="button" class="btn no-shadow no-bg px-0"><i data-feather="search"></i></button>
+                    </span>
+                    <input type="text" class="form-control no-border no-shadow no-bg typeahead" placeholder="Search..." data-plugin="typeahead">
+                </form>
+            </div>
+            <ul class="nav navbar-menu order-1 order-lg-2">
+                <li class="nav-item d-none d-sm-block">
+                    <a class="nav-link px-2" data-toggle="fullscreen" data-plugin="fullscreen">
+                        <i data-feather="maximize"></i>
+                    </a>
+                </li>
+                
+                <!-- User dropdown menu - Hidden by default, shown by JS if token exists -->
+                <li class="nav-item dropdown" id="userMenu">
+                    <a href="#" data-toggle="dropdown" class="nav-link d-flex align-items-center py-0 px-lg-0 px-2 text-color">
+                        <span class="avatar w-24"><img src="/bepop/assets/img/a1.jpg" alt="..."></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right mt-3 animate fadeIn">
+                        <a class="dropdown-item" asp-controller="Home" asp-action="History">
+                            <span>Listening History</span>
+                        </a>
+                        <a class="dropdown-item" asp-controller="Home" asp-action="Packages">
+                            <span>Packages</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" id="logoutBtn">Sign out</a>
+                    </div>
+                </li>
+                
+                <!-- Login/Register links - Hidden by default, shown by JS if no token -->
+                <li class="nav-item" id="loginLink">
+                    <a class="nav-link" asp-controller="Home" asp-action="SignIn">Login</a>
+                </li>
+                <li class="d-flex align-items-center" id="registerLink">
+                    <a class="btn btn-rounded btn-sm btn-primary" asp-controller="Home" asp-action="SignUp">Register</a>
+                </li>
+                
+                <!-- Navbar toggle btn -->
+                <li class="nav-item d-lg-none">
+                    <a href="#" class="nav-link px-2" data-toggle="collapse" data-toggle-class data-target="#navbarCollapse">
+                        <i data-feather="menu"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div id="main" class="layout-row flex">
+        <!-- Content -->
+        <div id="content" class="flex">
+            @RenderBody()
+        </div>
+    </div>
+
+    <footer id="footer" class="page-footer">
+        <div class="padding bg-dark b-t">
+            <div class="page-container">
+                <div class="py-5 text-inherit text-hover-primary">
+                    <div class="row mb-5">
+                        <div class="col-6 col-md-4">
+                            <div class="mb-3">
+                                <a asp-controller="Home" asp-action="Index" class="navbar-brand text-white">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1" fill="#000"></circle>
+                                        <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1"></circle>
+                                        <g class="loading-spin" stroke="currentColor" stroke-width="1" style="transform-origin: 12px 12px">
+                                            <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+                                        </g>
+                                    </svg>
+                                    <span class="hidden-folded d-inline l-s-n-1x">Bepop</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <h5 class="mb-3 text-muted">Pages</h5>
+                            <ul class="list-unstyled l-h-2x text-highlight">
+                                <li><a asp-controller="Home" asp-action="Artists">Artists</a></li>
+                                <li><a asp-controller="Home" asp-action="Albums">Albums</a></li>
+                                <li><a asp-controller="Home" asp-action="Packages">Packages</a></li>
+                                <li><a asp-controller="Home" asp-action="Discover">Discover</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <h5 class="mb-3 text-muted">Account</h5>
+                            <ul class="list-unstyled l-h-2x text-highlight">
+                                <li><a asp-controller="Home" asp-action="SignIn">Sign in</a></li>
+                                <li><a asp-controller="Home" asp-action="SignUp">Sign up</a></li>
+                                <li><a asp-controller="Home" asp-action="History">History</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center py-5">
+                        <span class="text-muted text-sm">&copy; @DateTime.Now.Year Bepop - Music Web Application. All rights reserved.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Player -->
+        <div data-plugin="plyr" class="plyrist plyrist_audio plyr-list-popup player bg-overlay b-t fixed-bottom" id="plyrist">
+            <audio controls hidden></audio>
+            <div class="plyr-list bg-dark-overlay" style="display:none"></div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/bepop/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/bepop/libs/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/bepop/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/bepop/libs/pjax/pjax.min.js"></script>
+    <script src="/bepop/assets/js/ajax.js"></script>
+    <script src="/bepop/assets/js/lazyload.config.js"></script>
+    <script src="/bepop/assets/js/lazyload.js"></script>
+    <script src="/bepop/assets/js/plugin.js"></script>
+    <script src="/bepop/libs/scrollreveal/dist/scrollreveal.min.js"></script>
+    <script src="/bepop/libs/slick-carousel/slick/slick.min.js"></script>
+    <script src="/bepop/libs/feather-icons/dist/feather.min.js"></script>
+    <script src="/bepop/assets/js/theme.js"></script>
+    <script>
+        // Auth UI Management - Run only once
+        (function() {
+            if (window.authUIInitialized) {
+                console.log('Auth UI already initialized, skipping...');
+                return;
+            }
+            window.authUIInitialized = true;
+            
+            console.log('Auth UI Script loaded');
+            
+            function updateAuthUI() {
+                // Check if user is logged in via token
+                var token = localStorage.getItem('jwtToken');
+                console.log('Token:', token ? 'EXISTS' : 'NOT FOUND');
+                
+                var userMenu = document.getElementById('userMenu');
+                var loginLink = document.getElementById('loginLink');
+                var registerLink = document.getElementById('registerLink');
+                
+                // Remove all auth-show classes first
+                if (userMenu) userMenu.classList.remove('auth-show');
+                if (loginLink) loginLink.classList.remove('auth-show');
+                if (registerLink) registerLink.classList.remove('auth-show');
+                
+                if (token) {
+                    // Token varsa, kullanıcı menüsünü göster
+                    console.log('Showing user menu, hiding login/register');
+                    if (userMenu) userMenu.classList.add('auth-show');
+                } else {
+                    // Token yoksa, login/register butonlarını göster
+                    console.log('Hiding user menu, showing login/register');
+                    if (loginLink) loginLink.classList.add('auth-show');
+                    if (registerLink) registerLink.classList.add('auth-show');
+                }
+                
+                console.log('UserMenu classes:', userMenu ? userMenu.className : 'not found');
+                console.log('LoginLink classes:', loginLink ? loginLink.className : 'not found');
+                console.log('RegisterLink classes:', registerLink ? registerLink.className : 'not found');
+            }
+            
+            // Run immediately
+            updateAuthUI();
+            
+            // Logout functionality
+            window.addEventListener('load', function() {
+                var logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        localStorage.removeItem('jwtToken');
+                        window.location.href = '/Home/SignIn';
+                    });
+                }
+                
+                // Feather icons
+                if (typeof feather !== 'undefined') {
+                    feather.replace();
+                }
+            });
+        })();
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

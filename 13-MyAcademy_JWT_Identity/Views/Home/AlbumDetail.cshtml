@@ -1,0 +1,102 @@
+@model AlbumDetailDto
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding sr">
+        <!-- Album Hero -->
+        <div class="page-hero">
+            <div class="media bg-media">
+                <div class="media-content" style="background-image:url(@(Model.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.CoverImageUrl) : "/bepop/assets/img/b5.jpg"))"></div>
+            </div>
+            <div class="pos-rlt p-4 d-flex align-items-end">
+                <img src="@(Model.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.CoverImageUrl) : "/bepop/assets/img/c0.jpg")" width="180" height="180" class="rounded mr-4" style="object-fit: cover;" />
+                <div>
+                    <h1 class="text-white font-weight-bold">@Model.Title</h1>
+                    <p class="text-muted">@Model.ArtistName • @Model.ReleaseYear • @Model.Songs.Count Songs</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Song List -->
+        <div class="heading pt-5 pb-3 d-flex">
+            <div>
+                <div class="text-muted sr-item">Tracklist</div>
+                <h5 class="text-highlight sr-item">Songs</h5>
+            </div>
+            <span class="flex"></span>
+        </div>
+
+        <div class="row list-row list-index">
+            @for (int i = 0; i < Model.Songs.Count; i++)
+            {
+                var song = Model.Songs[i];
+                <div class="col-12">
+                    <div class="list-item r">
+                        <div class="media">
+                            <a class="media-content" style="background-image:url(@(Model.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.CoverImageUrl) : "/bepop/assets/img/c0.jpg"))">
+                            </a>
+                            <div class="media-action media-action-overlay">
+                                <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
+                                    <i data-feather="heart" class="active-fill"></i>
+                                </button>
+                                <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                            </div>
+                        </div>
+                        <div class="list-content text-center">
+                            <div class="list-body">
+                                <span class="list-title title h-1x">@song.Title</span>
+                                <span class="list-subtitle d-block text-muted h-1x subtitle">@song.ArtistName</span>
+                            </div>
+                        </div>
+                        <div class="list-action show-row">
+                            <div class="d-flex align-items-center">
+                                <span class="badge @GetBadgeClass(song.ContentLevel) mr-2">@GetPackageName(song.ContentLevel)</span>
+                                <div class="px-3 text-sm text-muted d-none d-md-block">@FormatDuration(song.DurationInSeconds)</div>
+                                <button class="btn btn-icon no-bg no-shadow" data-toggle-class>
+                                    <i data-feather="heart" class="active-primary"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetBadgeClass(int level)
+    {
+        return level switch
+        {
+            1 => "badge badge-danger",
+            2 => "badge badge-warning",
+            3 => "badge badge-info",
+            4 => "badge badge-primary",
+            5 => "badge badge-secondary",
+            _ => "badge badge-light"
+        };
+    }
+
+    string GetPackageName(int level)
+    {
+        return level switch
+        {
+            1 => "Elite",
+            2 => "Premium",
+            3 => "Gold",
+            4 => "Standard",
+            5 => "Basic",
+            _ => "Free"
+        };
+    }
+
+    string FormatDuration(int seconds)
+    {
+        var mins = seconds / 60;
+        var secs = seconds % 60;
+        return $"{mins}:{secs:D2}";
+    }
+}

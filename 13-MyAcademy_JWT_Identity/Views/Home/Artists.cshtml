@@ -1,0 +1,50 @@
+@model List<ArtistDto>
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding sr">
+        <div class="page-hero">
+            <div class="media bg-media">
+                <div class="media-content" style="background-image:url(/bepop/assets/img/b6.jpg)"></div>
+            </div>
+            <div class="pos-rlt">
+                <h2 class="display-3 font-weight-bold text-white">@Model.Count Artists</h2>
+                <div class="col-6 px-0 py-3 text-muted">
+                    <p>Browse all artists and discover their albums</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="heading pt-5 pb-3 d-flex">
+            <div>
+                <div class="text-muted sr-item">All</div>
+                <h5 class="text-highlight sr-item">Artists</h5>
+            </div>
+            <span class="flex"></span>
+        </div>
+
+        <div class="row list media-circle">
+            @foreach (var artist in Model)
+            {
+                <div class="col-4 col-sm-4 col-md-3 col-lg-3 py-3">
+                    <div class="list-item r">
+                        <div class="media">
+                            <a asp-controller="Home" asp-action="ArtistDetail" asp-route-id="@artist.Id" class="media-content" style="background-image:url(@(string.IsNullOrEmpty(artist.ImageUrl) ? "/bepop/assets/img/a1.jpg" : artist.ImageUrl));">
+                            </a>
+                        </div>
+                        <div class="list-content text-center">
+                            <div class="list-body">
+                                <a asp-controller="Home" asp-action="ArtistDetail" asp-route-id="@artist.Id" class="list-subtitle d-block text-muted h-1x subtitle">
+                                    @artist.Name
+                                </a>
+                                <small class="text-muted">@artist.AlbumCount Album</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

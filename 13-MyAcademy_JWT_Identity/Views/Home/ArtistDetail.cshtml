@@ -1,0 +1,59 @@
+@model ArtistDetailDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding sr">
+        <!-- Artist Hero -->
+        <div class="page-hero">
+            <div class="media bg-media">
+                <div class="media-content" style="background-image:url(@(Model.ImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.ImageUrl) : "/bepop/assets/img/b6.jpg"))"></div>
+            </div>
+            <div class="pos-rlt p-4">
+                <h1 class="display-3 font-weight-bold text-white">@Model.Name</h1>
+                <p class="text-muted">@Model.Bio</p>
+                <span class="badge badge-dark">@Model.Albums.Count Album</span>
+            </div>
+        </div>
+
+        <!-- Albums -->
+        <div class="heading pt-5 pb-3 d-flex">
+            <div>
+                <div class="text-muted sr-item">Discography</div>
+                <h5 class="text-highlight sr-item">Albums</h5>
+            </div>
+            <span class="flex"></span>
+        </div>
+
+        <div class="row row-md">
+            @foreach (var album in Model.Albums)
+            {
+                <div class="col-4 col-md-3 col-lg-2 col-xl-1-8">
+                    <div class="list-item r list-hover">
+                        <div class="media">
+                            <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="media-content" style="background-image:url(@(album.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(album.CoverImageUrl) : "/bepop/assets/img/c0.jpg"))">
+                            </a>
+                            <div class="media-action media-action-overlay">
+                                <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
+                                    <i data-feather="heart" class="active-fill"></i>
+                                </button>
+                                <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                            </div>
+                        </div>
+                        <div class="list-content text-center">
+                            <div class="list-body">
+                                <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="list-title title h-1x">
+                                    @album.Title
+                                </a>
+                                <span class="list-subtitle d-block text-muted h-1x subtitle">
+                                    @album.ReleaseYear • @album.SongCount Songs
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

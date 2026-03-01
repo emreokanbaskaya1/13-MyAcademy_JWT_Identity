@@ -1,0 +1,161 @@
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <title>Sign In | Bepop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="/bepop/assets/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="/bepop/assets/css/style.css" type="text/css" />
+</head>
+<body class="layout-row bg-dark">
+<div class="d-flex flex-column flex">
+    <div class="row no-gutters h-100">
+        <div class="col-md-6 bg-dark bg-img" style="background-image:url(/bepop/assets/img/b6.jpg)">
+            <div class="p-3 p-md-5 d-flex flex-column h-100">
+                <h4 class="mb-3 text-white">Bepop</h4>
+                <div class="text-fade">Music Web Application</div>
+                <div class="d-flex flex align-items-center justify-content-center"></div>
+                <div class="d-flex text-sm text-fade">
+                    <a asp-controller="Home" asp-action="Index" class="text-white">About</a>
+                    <span class="flex"></span>
+                    <a href="#" class="text-white mx-1">Terms</a>
+                    <a href="#" class="text-white mx-1">Policy</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" id="content-body">
+            <div class="p-3 p-md-5">
+                <h5>Welcome back</h5>
+                <p><small class="text-muted">Login to manage your account</small></p>
+                <div id="registerSuccess" class="alert alert-success" style="display:none;">
+                    Kayýt baþarýyla tamamlandý! Þimdi giriþ yapabilirsiniz.
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUsername" class="form-control" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="checkbox mb-3">
+                        <label class="ui-check"><input type="checkbox"><i></i> Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-4">Sign in</button>
+                    <div>Do not have an account? <a asp-controller="Home" asp-action="SignUp" class="text-primary">Sign up</a></div>
+                    <div id="loginError" class="text-danger mt-2" style="display:none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/bepop/libs/jquery/dist/jquery.min.js"></script>
+<script src="/bepop/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#loginForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var username = $('#loginUsername').val().trim();
+        var password = $('#loginPassword').val();
+        var $submitBtn = $(this).find('button[type="submit"]');
+        
+        // Validation
+        if (!username || !password) {
+            $('#loginError').text('Lütfen tüm alanlarý doldurun.').show();
+            return;
+        }
+        
+        // Disable submit button and show loading
+        $submitBtn.prop('disabled', true).text('Giriþ yapýlýyor...');
+        $('#loginError').hide();
+        
+        // AJAX Request
+        $.ajax({
+            url: '/api/users/login',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                userName: username,
+                password: password
+            }),
+            success: function(response) {
+                console.log('Login response:', response);
+                
+                // Token'ý localStorage'a kaydet
+                if (response.token) {
+                    console.log('Token received:', response.token.substring(0, 20) + '...');
+                    localStorage.setItem('jwtToken', response.token);
+                    console.log('Token saved to localStorage');
+                    
+                    // Verify token was saved
+                    var savedToken = localStorage.getItem('jwtToken');
+                    console.log('Token verification:', savedToken ? 'SUCCESS' : 'FAILED');
+                    
+                    // Ana sayfaya yönlendir
+                    $submitBtn.text('Baþarýlý! Yönlendiriliyor...');
+                    setTimeout(function() {
+                        window.location.href = '/Home/Discover';
+                    }, 500);
+                } else {
+                    console.error('No token in response');
+                    $('#loginError').text('Sunucudan geçersiz yanýt alýndý.').show();
+                    $submitBtn.prop('disabled', false).text('Sign in');
+                }
+            },
+            error: function(xhr) {
+                var errorMsg = 'Kullanýcý adý veya þifre hatalý.';
+                
+                if (xhr.status === 400) {
+                    errorMsg = 'Kullanýcý adý veya þifre hatalý. Lütfen tekrar deneyin.';
+                } else if (xhr.status === 500) {
+                    errorMsg = 'Sunucu hatasý. Lütfen daha sonra tekrar deneyin.';
+                } else if (xhr.responseText) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.message || response.error) {
+                            errorMsg = response.message || response.error;
+                        }
+                    } catch {
+                        if (xhr.responseText.length < 200) {
+                            errorMsg = xhr.responseText;
+                        }
+                    }
+                }
+                
+                $('#loginError').text(errorMsg).show();
+                $submitBtn.prop('disabled', false).text('Sign in');
+            }
+        });
+    });
+    
+    // Hide error on input change
+    $('#loginForm input').on('input', function() {
+        $('#loginError').hide();
+    });
+    
+    // Check if already logged in
+    var token = localStorage.getItem('jwtToken');
+    if (token) {
+        // Already logged in, redirect to Discover
+        window.location.href = '/Home/Discover';
+    }
+    
+    // Check if redirected from registration
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registered') === 'true') {
+        $('#registerSuccess').show();
+        setTimeout(function() {
+            $('#registerSuccess').fadeOut();
+        }, 5000);
+    }
+});
+</script>
+</body>
+</html>

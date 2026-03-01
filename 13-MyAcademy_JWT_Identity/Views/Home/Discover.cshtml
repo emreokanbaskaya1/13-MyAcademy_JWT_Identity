@@ -1,0 +1,506 @@
+@model _13_MyAcademy_JWT_Identity.DTOs.DiscoverViewModel
+@{
+    ViewData["Title"] = "Discover";
+}
+
+@section Styles {
+<style>
+    /* ── Hero Slider ── */
+    .hero-slider-wrap {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        height: 280px;
+    }
+
+    .hero-slides {
+        display: flex;
+        height: 100%;
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+    }
+
+    .hero-slide {
+        min-width: 100%;
+        height: 100%;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-slide::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 60%, transparent 100%);
+        border-radius: 12px;
+    }
+
+    .hero-slide-content {
+        position: relative;
+        z-index: 2;
+        padding: 40px 48px;
+    }
+
+    .hero-slide-content h2 {
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .hero-slide-content p {
+        color: rgba(255,255,255,0.78);
+        max-width: 400px;
+        margin-bottom: 22px;
+        font-size: 0.95rem;
+    }
+
+    /* Dots */
+    .hero-dots {
+        position: absolute;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 10;
+    }
+
+    .hero-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.45);
+        cursor: pointer;
+        border: none;
+        padding: 0;
+        transition: all 0.3s ease;
+    }
+
+    .hero-dot.active {
+        background: #fff;
+        width: 24px;
+        border-radius: 4px;
+    }
+
+    /* Arrows */
+    .hero-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #fff;
+        transition: background 0.2s;
+        backdrop-filter: blur(4px);
+    }
+
+    .hero-arrow:hover { background: rgba(255,255,255,0.3); }
+    .hero-arrow.prev { left: 14px; }
+    .hero-arrow.next { right: 14px; }
+
+    /* ── Tracks Slider ── */
+    .tracks-slider-wrap {
+        position: relative;
+    }
+
+    .tracks-slider {
+        display: flex;
+        gap: 0;
+        overflow: hidden;
+    }
+
+    .track-slide {
+        flex: 0 0 calc(100% / 6);
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+
+    .tracks-nav {
+        position: absolute;
+        top: -48px;
+        right: 0;
+        display: flex;
+        gap: 6px;
+    }
+
+    .track-arrow {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ccc;
+        transition: all 0.2s;
+    }
+
+    .track-arrow:hover {
+        background: rgba(255,255,255,0.18);
+        color: #fff;
+    }
+
+    @@media (max-width: 1200px) { .track-slide { flex: 0 0 calc(100% / 5); } }
+    @@media (max-width: 920px)  { .track-slide { flex: 0 0 calc(100% / 4); } }
+    @@media (max-width: 768px)  { .track-slide { flex: 0 0 calc(100% / 3); } }
+    @@media (max-width: 576px)  { .track-slide { flex: 0 0 calc(100% / 2); } }
+</style>
+}
+
+<div>
+    <div class="page-content page-container" id="page-content">
+        <div class="padding sr">
+
+            <!-- ── Hero Slider ── -->
+            <div class="page-hero" style="padding:0;">
+                <div class="hero-slider-wrap" id="heroSlider">
+                    <div class="hero-slides" id="heroSlides">
+                        <!-- Slide 1 -->
+                        <div class="hero-slide" style="background-image:url(/bepop/assets/img/b9.jpg)">
+                            <div class="hero-slide-content">
+                                <h2>Amazing Songs</h2>
+                                <p>Paketine göre şarkılara eriş, müzik dinle ve yeni sanatçıları keşfet.</p>
+                                <a asp-controller="Home" asp-action="Artists" class="btn btn-rounded gd-primary text-white">Explore</a>
+                                <a href="#" class="btn no-bg text-white">Share</a>
+                            </div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="hero-slide" style="background-image:url(/bepop/assets/img/b0.jpg)">
+                            <div class="hero-slide-content">
+                                <h2>Bepop Top Charts</h2>
+                                <p>En çok dinlenen şarkılar ve albümleri keşfet.</p>
+                                <a asp-controller="Home" asp-action="Albums" class="btn btn-rounded gd-primary text-white">Explore</a>
+                                <a href="#" class="btn no-bg text-white">Share</a>
+                            </div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="hero-slide" style="background-image:url(/bepop/assets/img/b19.jpg)">
+                            <div class="hero-slide-content">
+                                <h2>Find Popular Artists</h2>
+                                <p>Türk müziğinin en sevilen sanatçılarını keşfet.</p>
+                                <a asp-controller="Home" asp-action="Artists" class="btn btn-rounded gd-primary text-white">Explore</a>
+                                <a href="#" class="btn no-bg text-white">Share</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nav Arrows -->
+                    <button class="hero-arrow prev" id="heroPrev" aria-label="Previous">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button class="hero-arrow next" id="heroNext" aria-label="Next">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+
+                    <!-- Dots -->
+                    <div class="hero-dots" id="heroDots">
+                        <button class="hero-dot active" data-index="0"></button>
+                        <button class="hero-dot" data-index="1"></button>
+                        <button class="hero-dot" data-index="2"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Top Tracks Slider ── -->
+            <div class="heading pt-5 pb-3 d-flex">
+                <div>
+                    <div class="text-muted sr-item">Weekly</div>
+                    <h5 class="text-highlight sr-item">Top Tracks</h5>
+                </div>
+                <span class="flex"></span>
+                <div class="tracks-nav">
+                    <button class="track-arrow" id="tracksPrev" aria-label="Previous">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <button class="track-arrow" id="tracksNext" aria-label="Next">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tracks-slider-wrap sr-item">
+                <div class="tracks-slider" id="tracksSlider">
+                    @foreach (var track in Model.TopTracks)
+                    {
+                        <div class="track-slide">
+                            <div class="list-item slick-item r list-hover mb-3">
+                                <div class="media">
+                                    <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="0" class="media-content" style="background-image:url(@(track.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
+                                    <div class="media-action media-action-overlay">
+                                        <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
+                                            <i data-feather="heart" class="active-fill"></i>
+                                        </button>
+                                        <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                                    </div>
+                                </div>
+                                <div class="list-content text-center">
+                                    <div class="list-body">
+                                        <span class="list-title title h-1x">@track.Title</span>
+                                        <span class="list-subtitle d-block text-muted h-1x subtitle">@track.ArtistName</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- ── Featured Albums ── -->
+            <div class="heading pt-5 pb-3 d-flex">
+                <div>
+                    <div class="text-muted sr-item">Featured</div>
+                    <h5 class="text-highlight sr-item">Albums</h5>
+                </div>
+                <span class="flex"></span>
+            </div>
+            <div class="row row-md">
+                @foreach (var album in Model.FeaturedAlbums)
+                {
+                    <div class="col-4 col-md-3 col-lg-2 col-xl-1-8">
+                        <div class="list-item r list-hover">
+                            <div class="media">
+                                <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="media-content" style="background-image:url(@(album.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
+                                <div class="media-action media-action-overlay">
+                                    <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
+                                        <i data-feather="heart" class="active-fill"></i>
+                                    </button>
+                                    <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                                </div>
+                            </div>
+                            <div class="list-content text-center">
+                                <div class="list-body">
+                                    <span class="list-title title h-1x">@album.Title</span>
+                                    <span class="list-subtitle d-block text-muted h-1x subtitle">@album.ArtistName</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- ── Recently Added & Events ── -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="heading pt-5 pb-3 d-flex">
+                        <div>
+                            <div class="text-muted sr-item">User</div>
+                            <h5 class="text-highlight sr-item">Recently Added</h5>
+                        </div>
+                        <span class="flex"></span>
+                    </div>
+                    <div class="row list-row list-index">
+                        @foreach (var song in Model.RecentlyAdded)
+                        {
+                            var minutes = song.DurationInSeconds / 60;
+                            var seconds = song.DurationInSeconds % 60;
+                            <div class="col-12">
+                                <div class="list-item r">
+                                    <div class="media">
+                                        <a class="media-content" style="background-image:url(@(song.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
+                                        <div class="media-action media-action-overlay">
+                                            <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
+                                                <i data-feather="heart" class="active-fill"></i>
+                                            </button>
+                                            <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                                        </div>
+                                    </div>
+                                    <div class="list-content text-center">
+                                        <div class="list-body">
+                                            <span class="list-title title h-1x">@song.Title</span>
+                                            <span class="list-subtitle d-block text-muted h-1x subtitle">@song.ArtistName</span>
+                                        </div>
+                                    </div>
+                                    <div class="list-action show-row">
+                                        <div class="d-flex align-items-center">
+                                            <div class="px-3 text-sm text-muted d-none d-md-block">@($"{minutes:D2}:{seconds:D2}")</div>
+                                            <button class="btn btn-icon no-bg no-shadow" data-toggle-class>
+                                                <i data-feather="heart" class="active-primary"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="heading pt-5 pb-3 d-flex">
+                        <div>
+                            <div class="text-muted sr-item">Upcoming</div>
+                            <h5 class="text-highlight sr-item">Events</h5>
+                        </div>
+                        <span class="flex"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="list-item list-overlay r mb-3">
+                                <div class="media media-4x3 gd-primary">
+                                    <a class="media-content"></a>
+                                </div>
+                                <div class="list-content p-4">
+                                    <div class="list-body">
+                                        <span class="list-title title h5 font-weight-bold">Spring Festival</span>
+                                        <span class="list-subtitle d-block text-muted h-1x subtitle">Müzik festivali yakında başlıyor</span>
+                                    </div>
+                                    <div class="list-footer">
+                                        <div class="text-muted text-sm">Coming soon</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="list-item list-overlay r mb-3">
+                                <div class="media media-4x3 gd-success">
+                                    <a class="media-content"></a>
+                                </div>
+                                <div class="list-content p-4">
+                                    <div class="list-body">
+                                        <span class="list-title title h5 font-weight-bold">Music Hub 2026</span>
+                                        <span class="list-subtitle d-block text-muted h-1x subtitle">En yeni müzikleri keşfedin</span>
+                                    </div>
+                                    <div class="list-footer">
+                                        <div class="text-muted text-sm">Coming soon</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="heading pt-5 pb-3 d-flex">
+                        <div>
+                            <div class="text-muted sr-item">Blog</div>
+                            <h5 class="text-highlight sr-item">News</h5>
+                        </div>
+                        <span class="flex"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="list-item r">
+                                <div class="media media-16x9">
+                                    <a class="media-content" style="background-image:url(/bepop/assets/img/b15.jpg)"></a>
+                                </div>
+                                <div class="list-content">
+                                    <div class="list-body"><span class="list-title title">Yeni sanatçılar eklendi</span></div>
+                                    <div class="list-footer"><div class="text-muted text-sm">Feb 24</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="list-item r">
+                                <div class="media media-16x9">
+                                    <a class="media-content" style="background-image:url(/bepop/assets/img/b16.jpg)"></a>
+                                </div>
+                                <div class="list-content">
+                                    <div class="list-body"><span class="list-title title">Paket güncellemeleri</span></div>
+                                    <div class="list-footer"><div class="text-muted text-sm">Feb 26</div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="list-item r">
+                                <div class="media media-16x9">
+                                    <a class="media-content" style="background-image:url(/bepop/assets/img/b17.jpg)"></a>
+                                </div>
+                                <div class="list-content">
+                                    <div class="list-body"><span class="list-title title">Yeni albümler yayında</span></div>
+                                    <div class="list-footer"><div class="text-muted text-sm">Feb 9</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    // ── Hero Slider ──────────────────────────────────────────
+    var heroSlides = document.getElementById('heroSlides');
+    var dots       = document.querySelectorAll('.hero-dot');
+    var total      = dots.length;
+    var current    = 0;
+    var autoTimer;
+
+    function goTo(n) {
+        current = (n + total) % total;
+        heroSlides.style.transform = 'translateX(-' + (current * 100) + '%)';
+        dots.forEach(function (d, i) {
+            d.classList.toggle('active', i === current);
+        });
+    }
+
+    function startAuto() {
+        autoTimer = setInterval(function () { goTo(current + 1); }, 4500);
+    }
+
+    function resetAuto() {
+        clearInterval(autoTimer);
+        startAuto();
+    }
+
+    document.getElementById('heroPrev').addEventListener('click', function () { goTo(current - 1); resetAuto(); });
+    document.getElementById('heroNext').addEventListener('click', function () { goTo(current + 1); resetAuto(); });
+    dots.forEach(function (d) {
+        d.addEventListener('click', function () { goTo(parseInt(d.dataset.index)); resetAuto(); });
+    });
+
+    startAuto();
+
+    // ── Tracks Slider ────────────────────────────────────────
+    var tracksSlider  = document.getElementById('tracksSlider');
+    var trackItems    = tracksSlider.querySelectorAll('.track-slide');
+    var trackCurrent  = 0;
+    var visibleCount  = 6;
+
+    function getVisible() {
+        var w = window.innerWidth;
+        if (w <= 576)  return 2;
+        if (w <= 768)  return 3;
+        if (w <= 920)  return 4;
+        return 6;
+    }
+
+    function applyTrackWidths() {
+        visibleCount = getVisible();
+        var pct = (100 / visibleCount) + '%';
+        trackItems.forEach(function (el) { el.style.flex = '0 0 ' + pct; });
+    }
+
+    function slideTrack(dir) {
+        visibleCount = getVisible();
+        var maxIdx = trackItems.length - visibleCount;
+        trackCurrent = Math.max(0, Math.min(trackCurrent + dir, maxIdx));
+        var pct = (100 / visibleCount);
+        tracksSlider.style.transform = 'translateX(-' + (trackCurrent * pct) + '%)';
+        tracksSlider.style.transition = 'transform 0.4s ease';
+    }
+
+    document.getElementById('tracksPrev').addEventListener('click', function () { slideTrack(-1); });
+    document.getElementById('tracksNext').addEventListener('click', function () { slideTrack(1); });
+
+    applyTrackWidths();
+    window.addEventListener('resize', function () { applyTrackWidths(); slideTrack(0); });
+
+    // Re-init feather icons if available
+    if (typeof feather !== 'undefined') feather.replace();
+})();
+</script>
+}

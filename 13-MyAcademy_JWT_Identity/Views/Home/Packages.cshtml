@@ -1,0 +1,94 @@
+@model List<PackageDto>
+@{
+    ViewData["Title"] = "Packages";
+}
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding sr">
+        <div class="page-hero">
+            <div class="media bg-media">
+                <div class="media-content" style="background-image:url(/bepop/assets/img/b8.jpg)"></div>
+            </div>
+            <div class="pos-rlt text-center p-5">
+                <h2 class="display-3 font-weight-bold text-white">Packages</h2>
+                <div class="col-6 mx-auto px-0 py-3 text-muted">
+                    <p>Size uygun paketi seçin ve müzik dünyasını keşfedin</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Package Cards -->
+        <div class="heading pt-5 pb-3 d-flex">
+            <div>
+                <div class="text-muted sr-item">Choose</div>
+                <h5 class="text-highlight sr-item">Your Plan</h5>
+            </div>
+            <span class="flex"></span>
+        </div>
+
+        <div class="row">
+            @foreach (var pkg in Model)
+            {
+                var badgeClass = pkg.ContentLevel switch
+                {
+                    1 => "gd-danger",
+                    2 => "gd-warning",
+                    3 => "gd-info",
+                    4 => "gd-primary",
+                    5 => "gd-secondary",
+                    _ => "bg-dark"
+                };
+
+                var accessLevels = string.Join("-", Enumerable.Range(pkg.ContentLevel, 7 - pkg.ContentLevel));
+
+                <div class="col-md-4 col-lg-2 mb-4">
+                    <div class="card text-center b-a">
+                        <div class="card-header @badgeClass text-white">
+                            <h5 class="mb-0">@pkg.Name</h5>
+                        </div>
+                        <div class="card-body bg-dark">
+                            <div class="py-3">
+                                <span class="display-4 font-weight-bold text-white">@pkg.ContentLevel</span>
+                                <div class="text-muted text-sm mt-1">Content Level</div>
+                            </div>
+                            <ul class="list-unstyled text-muted text-sm l-h-2x">
+                                <li>Access: @accessLevels</li>
+                                <li>@(7 - pkg.ContentLevel) tier content</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Access Table -->
+        <div class="heading pt-5 pb-3 d-flex">
+            <div>
+                <div class="text-muted sr-item">Compare</div>
+                <h5 class="text-highlight sr-item">Access Levels</h5>
+            </div>
+            <span class="flex"></span>
+        </div>
+
+        <div class="card bg-dark b-a">
+            <div class="card-body">
+                <table class="table table-dark table-bordered text-center">
+                    <thead>
+                        <tr>
+                            <th>Package</th>
+                            <th>Access Levels</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><span class="badge badge-danger">Elite</span></td><td>1-2-3-4-5-6</td></tr>
+                        <tr><td><span class="badge badge-warning">Premium</span></td><td>2-3-4-5-6</td></tr>
+                        <tr><td><span class="badge badge-info">Gold</span></td><td>3-4-5-6</td></tr>
+                        <tr><td><span class="badge badge-primary">Standard</span></td><td>4-5-6</td></tr>
+                        <tr><td><span class="badge badge-secondary">Basic</span></td><td>5-6</td></tr>
+                        <tr><td><span class="badge badge-light">Free</span></td><td>6</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
