@@ -240,7 +240,7 @@
                         <div class="track-slide">
                             <div class="list-item slick-item r list-hover mb-3">
                                 <div class="media">
-                                    <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="0" class="media-content" style="background-image:url(@(track.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
+                                    <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@track.AlbumId" class="media-content" style="background-image:url(@(track.ArtistImageUrl ?? track.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
                                     <div class="media-action media-action-overlay">
                                         <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
                                             <i data-feather="heart" class="active-fill"></i>
@@ -274,7 +274,7 @@
                     <div class="col-4 col-md-3 col-lg-2 col-xl-1-8">
                         <div class="list-item r list-hover">
                             <div class="media">
-                                <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="media-content" style="background-image:url(@(album.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
+                                <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="media-content" style="background-image:url(@(album.ArtistImageUrl ?? album.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
                                 <div class="media-action media-action-overlay">
                                     <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
                                         <i data-feather="heart" class="active-fill"></i>
@@ -311,7 +311,7 @@
                             <div class="col-12">
                                 <div class="list-item r">
                                     <div class="media">
-                                        <a class="media-content" style="background-image:url(@(song.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
+                                        <a class="media-content" style="background-image:url(@(song.ArtistImageUrl ?? song.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))"></a>
                                         <div class="media-action media-action-overlay">
                                             <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
                                                 <i data-feather="heart" class="active-fill"></i>

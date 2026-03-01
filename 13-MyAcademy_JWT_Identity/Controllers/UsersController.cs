@@ -109,5 +109,34 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
 
             return Ok(new { message = $"Paket '{package.Name}' olarak güncellendi", token = token });
         }
+
+        /// <summary>
+        /// Giriş yapmış kullanıcının dinleme geçmişini getirir.
+        /// </summary>
+        [HttpGet("history")]
+        [Authorize]
+        public async Task<IActionResult> GetHistory()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            var history = await _context.UserSongHistories
+                .Where(h => h.UserId == userId)
+                .Include(h => h.Song)
+                    .ThenInclude(s => s.Album)
+                        .ThenInclude(a => a.Artist)
+                .OrderByDescending(h => h.PlayedAt)
+                .Take(50)
+                .Select(h => new SongHistoryDto
+                {
+                    SongTitle = h.Song.Title,
+                    ArtistName = h.Song.Album.Artist.Name,
+                    AlbumTitle = h.Song.Album.Title,
+                    ArtistImageUrl = h.Song.Album.Artist.ImageUrl,
+                    PlayedAt = h.PlayedAt
+                })
+                .ToListAsync();
+
+            return Ok(history);
+        }
     }
 }

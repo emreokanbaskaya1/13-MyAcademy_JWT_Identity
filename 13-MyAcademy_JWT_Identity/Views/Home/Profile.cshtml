@@ -1,0 +1,269 @@
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+@section Styles {
+<style>
+    .profile-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(255,255,255,0.2);
+        flex-shrink: 0;
+    }
+
+    .package-badge {
+        display: inline-block;
+        padding: 0.35rem 0.9rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .package-1 { background: linear-gradient(135deg,#f5af19,#f12711); color:#fff; }
+    .package-2 { background: linear-gradient(135deg,#a18cd1,#fbc2eb); color:#fff; }
+    .package-3 { background: linear-gradient(135deg,#f7971e,#ffd200); color:#1a1b22; }
+    .package-4 { background: linear-gradient(135deg,#56ccf2,#2f80ed); color:#fff; }
+    .package-5 { background: linear-gradient(135deg,#9b9b9b,#cfcfcf); color:#1a1b22; }
+    .package-6 { background: rgba(255,255,255,0.1); color:#aaa; border:1px solid rgba(255,255,255,0.2); }
+
+    .profile-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-card > .card-label {
+        font-size: 0.68rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #6c7781;
+        margin-bottom: 1.25rem;
+        display: block;
+    }
+
+    .form-control-dark {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: #fff;
+        border-radius: 8px;
+    }
+
+    .form-control-dark:focus {
+        background: rgba(255,255,255,0.09);
+        border-color: #c02afe;
+        color: #fff;
+        box-shadow: 0 0 0 2px rgba(192,42,254,0.25);
+    }
+
+    .form-control-dark::placeholder { color: #6c7781; }
+
+    .history-thumb {
+        width: 44px;
+        height: 44px;
+        border-radius: 6px;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+    }
+
+    .played-at { font-size: 0.72rem; color: #6c7781; white-space: nowrap; }
+</style>
+}
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding sr">
+
+        <!-- ?? Hero ?? -->
+        <div class="page-hero">
+            <div class="media bg-media">
+                <div class="media-content" style="background-image:url(/bepop/assets/img/b9.jpg)"></div>
+            </div>
+            <div class="pos-rlt p-4 d-flex align-items-end">
+                <div>
+                    <h1 class="text-white font-weight-bold mb-1" id="profileUsername">—</h1>
+                    <p class="text-muted mb-2" id="profileEmail">—</p>
+                    <span class="package-badge package-6" id="profilePackageBadge">Free</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ?? Not logged in ?? -->
+        <div id="profileNotAuth" style="display:none;" class="text-center py-5">
+            <i data-feather="lock" style="width:48px;height:48px;color:#6c7781;"></i>
+            <p class="text-muted mt-3">Bu sayfayý görüntülemek için giriþ yapmanýz gerekiyor.</p>
+            <a asp-controller="Home" asp-action="SignIn" class="btn gd-primary text-white btn-rounded mt-2">Giriþ Yap</a>
+        </div>
+
+        <!-- ?? Main Content ?? -->
+        <div id="profileContent">
+            <div class="row mt-4">
+
+                <!-- Sol: Hesap Bilgileri + Þifre Deðiþtir -->
+                <div class="col-md-5">
+
+                    <!-- Hesap Bilgileri -->
+                    <div class="profile-card">
+                        <span class="card-label">Hesap Bilgileri</span>
+                        <div class="mb-3">
+                            <div class="text-muted small mb-1">Kullanýcý Adý</div>
+                            <div class="text-white" id="infoUsername">—</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-muted small mb-1">E-posta</div>
+                            <div class="text-white" id="infoEmail">—</div>
+                        </div>
+                        <div>
+                            <div class="text-muted small mb-1">Paket</div>
+                            <span class="package-badge package-6" id="infoPackage">Free</span>
+                        </div>
+                    </div>
+
+                    <!-- Þifre Deðiþtir -->
+                    <div class="profile-card">
+                        <span class="card-label">Þifre Deðiþtir</span>
+
+                        @if (TempData["PasswordError"] != null)
+                        {
+                            <div class="alert alert-danger py-2 px-3 mb-3" style="border-radius:8px;font-size:.875rem;">
+                                @TempData["PasswordError"]
+                            </div>
+                        }
+                        @if (TempData["PasswordSuccess"] != null)
+                        {
+                            <div class="alert alert-success py-2 px-3 mb-3" style="border-radius:8px;font-size:.875rem;">
+                                @TempData["PasswordSuccess"]
+                            </div>
+                        }
+
+                        <form asp-controller="Home" asp-action="ChangePassword" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Mevcut Þifre</div>
+                                <input type="password" name="CurrentPassword"
+                                       class="form-control form-control-dark"
+                                       placeholder="••••••••" required />
+                            </div>
+                            <div class="mb-3">
+                                <div class="text-muted small mb-1">Yeni Þifre</div>
+                                <input type="password" name="NewPassword"
+                                       class="form-control form-control-dark"
+                                       placeholder="••••••••" required />
+                            </div>
+                            <div class="mb-4">
+                                <div class="text-muted small mb-1">Yeni Þifre (Tekrar)</div>
+                                <input type="password" name="ConfirmNewPassword"
+                                       class="form-control form-control-dark"
+                                       placeholder="••••••••" required />
+                            </div>
+                            <button type="submit" class="btn gd-primary text-white btn-block" style="border-radius:8px;">
+                                Þifreyi Güncelle
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Sað: Dinleme Geçmiþi -->
+                <div class="col-md-7">
+                    <div class="profile-card" style="min-height:420px;">
+                        <span class="card-label">Dinleme Geçmiþi</span>
+                        <div id="historyList">
+                            <div class="text-center text-muted py-5">
+                                <i data-feather="music" style="width:40px;height:40px;"></i>
+                                <p class="mt-3 small">Henüz dinleme geçmiþi yok.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var token   = localStorage.getItem('jwtToken');
+    var content = document.getElementById('profileContent');
+    var notAuth = document.getElementById('profileNotAuth');
+
+    if (!token) {
+        content.style.display = 'none';
+        notAuth.style.display = 'block';
+        if (typeof feather !== 'undefined') feather.replace();
+        return;
+    }
+
+    var headers = { 'Authorization': 'Bearer ' + token };
+
+    // Kullanýcý bilgilerini API'den çek
+    fetch('/api/Users/profile', { headers: headers })
+        .then(function (r) {
+            if (r.status === 401) {
+                // Token geçersiz/süresi dolmuþ
+                localStorage.removeItem('jwtToken');
+                content.style.display = 'none';
+                notAuth.style.display = 'block';
+                if (typeof feather !== 'undefined') feather.replace();
+                return null;
+            }
+            return r.json();
+        })
+        .then(function (user) {
+            if (!user) return;
+
+            var pkgLevel = user.packageLevel || 6;
+            var pkgName  = user.packageName  || 'Free';
+
+            // Hero
+            document.getElementById('profileUsername').textContent = user.userName;
+            document.getElementById('profileEmail').textContent    = user.email;
+            var heroBadge = document.getElementById('profilePackageBadge');
+            heroBadge.textContent = pkgName;
+            heroBadge.className   = 'package-badge package-' + pkgLevel;
+
+            // Info card
+            document.getElementById('infoUsername').textContent = user.userName;
+            document.getElementById('infoEmail').textContent    = user.email;
+            var infoBadge = document.getElementById('infoPackage');
+            infoBadge.textContent = pkgName;
+            infoBadge.className   = 'package-badge package-' + pkgLevel;
+
+            if (typeof feather !== 'undefined') feather.replace();
+        })
+        .catch(function () {});
+
+    // Dinleme geçmiþini API'den çek
+    fetch('/api/Users/history', { headers: headers })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (history) {
+            if (!history || history.length === 0) return;
+            var html = '';
+            history.forEach(function (item) {
+                var img     = item.artistImageUrl || '/bepop/assets/img/c0.jpg';
+                var date    = new Date(item.playedAt);
+                var dateStr = date.toLocaleDateString('tr-TR') + ' '
+                            + date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                html +=
+                    '<div class="d-flex align-items-center mb-3">' +
+                        '<div class="history-thumb mr-3" style="background-image:url(' + img + ')"></div>' +
+                        '<div class="flex">' +
+                            '<div class="text-white h-1x">' + item.songTitle + '</div>' +
+                            '<div class="text-muted small">' + item.artistName + ' &bull; ' + item.albumTitle + '</div>' +
+                        '</div>' +
+                        '<div class="played-at ml-3">' + dateStr + '</div>' +
+                    '</div>';
+            });
+            document.getElementById('historyList').innerHTML = html;
+        })
+        .catch(function () {});
+
+})();
+</script>
+}

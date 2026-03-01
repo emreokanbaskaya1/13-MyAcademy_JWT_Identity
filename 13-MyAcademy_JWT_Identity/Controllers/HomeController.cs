@@ -1,11 +1,14 @@
 using _13_MyAcademy_JWT_Identity.Context;
 using _13_MyAcademy_JWT_Identity.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using _13_MyAcademy_JWT_Identity.Entities;
 
 namespace _13_MyAcademy_JWT_Identity.Controllers
 {
-    public class HomeController(AppDbContext _context) : Controller
+    public class HomeController(AppDbContext _context, UserManager<AppUser> _userManager) : Controller
     {
         public IActionResult Index()
         {
@@ -25,9 +28,11 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                     Title = s.Title,
                     DurationInSeconds = s.DurationInSeconds,
                     ContentLevel = s.ContentLevel,
+                    AlbumId = s.AlbumId,
                     AlbumTitle = s.Album.Title,
                     ArtistName = s.Album.Artist.Name,
-                    CoverImageUrl = s.Album.CoverImageUrl
+                    CoverImageUrl = s.Album.CoverImageUrl,
+                    ArtistImageUrl = s.Album.Artist.ImageUrl
                 })
                 .ToListAsync();
 
@@ -40,6 +45,7 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                     Id = a.Id,
                     Title = a.Title,
                     CoverImageUrl = a.CoverImageUrl,
+                    ArtistImageUrl = a.Artist.ImageUrl,
                     ReleaseYear = a.ReleaseYear,
                     ArtistName = a.Artist.Name,
                     SongCount = a.Songs.Count
@@ -57,9 +63,11 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                     Title = s.Title,
                     DurationInSeconds = s.DurationInSeconds,
                     ContentLevel = s.ContentLevel,
+                    AlbumId = s.AlbumId,
                     AlbumTitle = s.Album.Title,
                     ArtistName = s.Album.Artist.Name,
-                    CoverImageUrl = s.Album.CoverImageUrl
+                    CoverImageUrl = s.Album.CoverImageUrl,
+                    ArtistImageUrl = s.Album.Artist.ImageUrl
                 })
                 .ToListAsync();
 
@@ -128,6 +136,7 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                     Id = a.Id,
                     Title = a.Title,
                     CoverImageUrl = a.CoverImageUrl,
+                    ArtistImageUrl = a.Artist.ImageUrl,
                     ReleaseYear = a.ReleaseYear,
                     ArtistName = a.Artist.Name,
                     SongCount = a.Songs.Count
@@ -151,6 +160,8 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                 Id = album.Id,
                 Title = album.Title,
                 CoverImageUrl = album.CoverImageUrl,
+                ArtistImageUrl = album.Artist.ImageUrl,
+                ArtistId = album.Artist.Id,
                 ReleaseYear = album.ReleaseYear,
                 ArtistName = album.Artist.Name,
                 Songs = album.Songs.Select(s => new SongDto
@@ -159,9 +170,11 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                     Title = s.Title,
                     DurationInSeconds = s.DurationInSeconds,
                     ContentLevel = s.ContentLevel,
+                    AlbumId = album.Id,
                     AlbumTitle = album.Title,
                     ArtistName = album.Artist.Name,
-                    CoverImageUrl = album.CoverImageUrl
+                    CoverImageUrl = album.CoverImageUrl,
+                    ArtistImageUrl = album.Artist.ImageUrl
                 }).ToList()
             };
             return View(dto);
@@ -198,6 +211,47 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
         {
             ViewData["Title"] = "Dinleme Geçmişi";
             return View();
+        }
+
+        public async Task<IActionResult> Profile()
+        {
+            ViewData["Title"] = "Profilim";
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto model)
+        {
+            if (model.NewPassword != model.ConfirmNewPassword)
+            {
+                TempData["PasswordError"] = "Yeni şifreler eşleşmiyor.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            var userName = User.Identity?.Name;
+            if (string.IsNullOrEmpty(userName))
+            {
+                TempData["PasswordError"] = "Oturumunuz sonlanmış. Lütfen tekrar giriş yapın.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                TempData["PasswordError"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction(nameof(Profile));
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                TempData["PasswordError"] = string.Join(", ", result.Errors.Select(e => e.Description));
+                return RedirectToAction(nameof(Profile));
+            }
+
+            TempData["PasswordSuccess"] = "Şifreniz başarıyla güncellendi.";
+            return RedirectToAction(nameof(Profile));
         }
     }
 }

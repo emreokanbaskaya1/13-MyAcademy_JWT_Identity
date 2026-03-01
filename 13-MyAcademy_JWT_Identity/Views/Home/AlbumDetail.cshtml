@@ -8,13 +8,16 @@
         <!-- Album Hero -->
         <div class="page-hero">
             <div class="media bg-media">
-                <div class="media-content" style="background-image:url(@(Model.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.CoverImageUrl) : "/bepop/assets/img/b5.jpg"))"></div>
+                <div class="media-content" style="background-image:url(@(Model.ArtistImageUrl ?? Model.CoverImageUrl ?? "/bepop/assets/img/b5.jpg"))"></div>
             </div>
             <div class="pos-rlt p-4 d-flex align-items-end">
-                <img src="@(Model.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.CoverImageUrl) : "/bepop/assets/img/c0.jpg")" width="180" height="180" class="rounded mr-4" style="object-fit: cover;" />
+                <img src="@(Model.ArtistImageUrl ?? Model.CoverImageUrl ?? "/bepop/assets/img/c0.jpg")" width="180" height="180" class="rounded mr-4" style="object-fit: cover;" />
                 <div>
                     <h1 class="text-white font-weight-bold">@Model.Title</h1>
-                    <p class="text-muted">@Model.ArtistName • @Model.ReleaseYear • @Model.Songs.Count Songs</p>
+                    <p class="text-muted">
+                        <a asp-controller="Home" asp-action="ArtistDetail" asp-route-id="@Model.ArtistId" class="text-muted">@Model.ArtistName</a>
+                        • @Model.ReleaseYear • @Model.Songs.Count Songs
+                    </p>
                 </div>
             </div>
         </div>
@@ -35,7 +38,7 @@
                 <div class="col-12">
                     <div class="list-item r">
                         <div class="media">
-                            <a class="media-content" style="background-image:url(@(Model.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.CoverImageUrl) : "/bepop/assets/img/c0.jpg"))">
+                            <a class="media-content" style="background-image:url(@(song.ArtistImageUrl ?? song.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))">
                             </a>
                             <div class="media-action media-action-overlay">
                                 <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>

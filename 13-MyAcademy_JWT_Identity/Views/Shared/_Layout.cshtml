@@ -78,17 +78,31 @@
                 <!-- User dropdown menu - Hidden by default, shown by JS if token exists -->
                 <li class="nav-item dropdown" id="userMenu">
                     <a href="#" data-toggle="dropdown" class="nav-link d-flex align-items-center py-0 px-lg-0 px-2 text-color">
-                        <span class="avatar w-24"><img src="/bepop/assets/img/a1.jpg" alt="..."></span>
+                        <span class="avatar w-24 mr-2"><img src="/bepop/assets/img/a1.jpg" alt="..."></span>
+                        <span class="d-none d-lg-inline text-muted small" id="navUsername"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right mt-3 animate fadeIn">
+                        <div class="px-3 py-2 border-bottom" style="border-color:rgba(255,255,255,0.08)!important;">
+                            <div class="text-white font-weight-500 small" id="dropUsername">—</div>
+                            <div class="text-muted" style="font-size:0.72rem;" id="dropPackage">Free</div>
+                        </div>
+                        <a class="dropdown-item" asp-controller="Home" asp-action="Profile">
+                            <i data-feather="user" style="width:14px;height:14px;" class="mr-2"></i>
+                            <span>Profilim</span>
+                        </a>
                         <a class="dropdown-item" asp-controller="Home" asp-action="History">
+                            <i data-feather="clock" style="width:14px;height:14px;" class="mr-2"></i>
                             <span>Listening History</span>
                         </a>
                         <a class="dropdown-item" asp-controller="Home" asp-action="Packages">
+                            <i data-feather="package" style="width:14px;height:14px;" class="mr-2"></i>
                             <span>Packages</span>
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" id="logoutBtn">Sign out</a>
+                        <a class="dropdown-item" href="#" id="logoutBtn">
+                            <i data-feather="log-out" style="width:14px;height:14px;" class="mr-2"></i>
+                            <span>Sign out</span>
+                        </a>
                     </div>
                 </li>
                 
@@ -192,33 +206,39 @@
             console.log('Auth UI Script loaded');
             
             function updateAuthUI() {
-                // Check if user is logged in via token
                 var token = localStorage.getItem('jwtToken');
                 console.log('Token:', token ? 'EXISTS' : 'NOT FOUND');
                 
-                var userMenu = document.getElementById('userMenu');
-                var loginLink = document.getElementById('loginLink');
+                var userMenu    = document.getElementById('userMenu');
+                var loginLink   = document.getElementById('loginLink');
                 var registerLink = document.getElementById('registerLink');
                 
-                // Remove all auth-show classes first
                 if (userMenu) userMenu.classList.remove('auth-show');
                 if (loginLink) loginLink.classList.remove('auth-show');
                 if (registerLink) registerLink.classList.remove('auth-show');
                 
                 if (token) {
-                    // Token varsa, kullanıcı menüsünü göster
-                    console.log('Showing user menu, hiding login/register');
                     if (userMenu) userMenu.classList.add('auth-show');
+
+                    // Parse JWT and fill dropdown info
+                    try {
+                        var payload = JSON.parse(atob(token.split('.')[1]));
+                        var userName = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+                                    || payload['unique_name'] || payload['name'] || '';
+                        var pkgName  = payload['PackageName'] || payload['packageName'] || 'Free';
+
+                        var navUser  = document.getElementById('navUsername');
+                        var dropUser = document.getElementById('dropUsername');
+                        var dropPkg  = document.getElementById('dropPackage');
+
+                        if (navUser)  navUser.textContent  = userName;
+                        if (dropUser) dropUser.textContent = userName;
+                        if (dropPkg)  dropPkg.textContent  = pkgName + ' Paketi';
+                    } catch (e) {}
                 } else {
-                    // Token yoksa, login/register butonlarını göster
-                    console.log('Hiding user menu, showing login/register');
                     if (loginLink) loginLink.classList.add('auth-show');
                     if (registerLink) registerLink.classList.add('auth-show');
                 }
-                
-                console.log('UserMenu classes:', userMenu ? userMenu.className : 'not found');
-                console.log('LoginLink classes:', loginLink ? loginLink.className : 'not found');
-                console.log('RegisterLink classes:', registerLink ? registerLink.className : 'not found');
             }
             
             // Run immediately

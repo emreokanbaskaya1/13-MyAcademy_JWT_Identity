@@ -8,12 +8,15 @@
         <!-- Artist Hero -->
         <div class="page-hero">
             <div class="media bg-media">
-                <div class="media-content" style="background-image:url(@(Model.ImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(Model.ImageUrl) : "/bepop/assets/img/b6.jpg"))"></div>
+                <div class="media-content" style="background-image:url(@(Model.ImageUrl ?? "/bepop/assets/img/b6.jpg"))"></div>
             </div>
-            <div class="pos-rlt p-4">
-                <h1 class="display-3 font-weight-bold text-white">@Model.Name</h1>
-                <p class="text-muted">@Model.Bio</p>
-                <span class="badge badge-dark">@Model.Albums.Count Album</span>
+            <div class="pos-rlt p-4 d-flex align-items-end">
+                <img src="@(Model.ImageUrl ?? "/bepop/assets/img/b6.jpg")" width="180" height="180" class="rounded mr-4" style="object-fit:cover;" />
+                <div>
+                    <h1 class="display-3 font-weight-bold text-white">@Model.Name</h1>
+                    <p class="text-muted">@Model.Bio</p>
+                    <span class="badge badge-dark">@Model.Albums.Count Album</span>
+                </div>
             </div>
         </div>
 
@@ -32,7 +35,7 @@
                 <div class="col-4 col-md-3 col-lg-2 col-xl-1-8">
                     <div class="list-item r list-hover">
                         <div class="media">
-                            <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="media-content" style="background-image:url(@(album.CoverImageUrl != null ? "/bepop/assets/img/" + System.IO.Path.GetFileName(album.CoverImageUrl) : "/bepop/assets/img/c0.jpg"))">
+                            <a asp-controller="Home" asp-action="AlbumDetail" asp-route-id="@album.Id" class="media-content" style="background-image:url(@(Model.ImageUrl ?? album.CoverImageUrl ?? "/bepop/assets/img/c0.jpg"))">
                             </a>
                             <div class="media-action media-action-overlay">
                                 <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
