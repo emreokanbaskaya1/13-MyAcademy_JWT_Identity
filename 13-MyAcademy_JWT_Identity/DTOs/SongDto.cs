@@ -6,6 +6,8 @@ namespace _13_MyAcademy_JWT_Identity.DTOs
         public string Title { get; set; } = string.Empty;
         public int DurationInSeconds { get; set; }
         public int ContentLevel { get; set; }
+        public string PackageName { get; set; } = string.Empty;
+        public bool IsAccessible { get; set; } = true;
         public int AlbumId { get; set; }
         public string AlbumTitle { get; set; } = string.Empty;
         public string ArtistName { get; set; } = string.Empty;

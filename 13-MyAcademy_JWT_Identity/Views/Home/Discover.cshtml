@@ -3,167 +3,35 @@
     ViewData["Title"] = "Discover";
 }
 
-@section Styles {
-<style>
-    /* ── Hero Slider ── */
-    .hero-slider-wrap {
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px;
-        height: 280px;
-    }
-
-    .hero-slides {
-        display: flex;
-        height: 100%;
-        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        will-change: transform;
-    }
-
-    .hero-slide {
-        min-width: 100%;
-        height: 100%;
-        position: relative;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-    }
-
-    .hero-slide::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 60%, transparent 100%);
-        border-radius: 12px;
-    }
-
-    .hero-slide-content {
-        position: relative;
-        z-index: 2;
-        padding: 40px 48px;
-    }
-
-    .hero-slide-content h2 {
-        font-size: 2.4rem;
-        font-weight: 800;
-        color: #fff;
-        margin-bottom: 10px;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
-
-    .hero-slide-content p {
-        color: rgba(255,255,255,0.78);
-        max-width: 400px;
-        margin-bottom: 22px;
-        font-size: 0.95rem;
-    }
-
-    /* Dots */
-    .hero-dots {
-        position: absolute;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 8px;
-        z-index: 10;
-    }
-
-    .hero-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.45);
-        cursor: pointer;
-        border: none;
-        padding: 0;
-        transition: all 0.3s ease;
-    }
-
-    .hero-dot.active {
-        background: #fff;
-        width: 24px;
-        border-radius: 4px;
-    }
-
-    /* Arrows */
-    .hero-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 50%;
-        width: 38px;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: #fff;
-        transition: background 0.2s;
-        backdrop-filter: blur(4px);
-    }
-
-    .hero-arrow:hover { background: rgba(255,255,255,0.3); }
-    .hero-arrow.prev { left: 14px; }
-    .hero-arrow.next { right: 14px; }
-
-    /* ── Tracks Slider ── */
-    .tracks-slider-wrap {
-        position: relative;
-    }
-
-    .tracks-slider {
-        display: flex;
-        gap: 0;
-        overflow: hidden;
-    }
-
-    .track-slide {
-        flex: 0 0 calc(100% / 6);
-        padding: 0 8px;
-        box-sizing: border-box;
-    }
-
-    .tracks-nav {
-        position: absolute;
-        top: -48px;
-        right: 0;
-        display: flex;
-        gap: 6px;
-    }
-
-    .track-arrow {
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: #ccc;
-        transition: all 0.2s;
-    }
-
-    .track-arrow:hover {
-        background: rgba(255,255,255,0.18);
-        color: #fff;
-    }
-
-    @@media (max-width: 1200px) { .track-slide { flex: 0 0 calc(100% / 5); } }
-    @@media (max-width: 920px)  { .track-slide { flex: 0 0 calc(100% / 4); } }
-    @@media (max-width: 768px)  { .track-slide { flex: 0 0 calc(100% / 3); } }
-    @@media (max-width: 576px)  { .track-slide { flex: 0 0 calc(100% / 2); } }
-</style>
-}
-
 <div>
     <div class="page-content page-container" id="page-content">
+        <style>
+        .hero-slider-wrap { position: relative; overflow: hidden; border-radius: 12px; height: 280px; }
+        .hero-slides { display: flex; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
+        .hero-slide { min-width: 100%; height: 100%; position: relative; background-size: cover; background-position: center; display: flex; align-items: center; }
+        .hero-slide::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 60%, transparent 100%); border-radius: 12px; }
+        .hero-slide-content { position: relative; z-index: 2; padding: 40px 48px; }
+        .hero-slide-content h2 { font-size: 2.4rem; font-weight: 800; color: #fff; margin-bottom: 10px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        .hero-slide-content p { color: rgba(255,255,255,0.78); max-width: 400px; margin-bottom: 22px; font-size: 0.95rem; }
+        .hero-dots { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+        .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.45); cursor: pointer; border: none; padding: 0; transition: all 0.3s ease; }
+        .hero-dot.active { background: #fff; width: 24px; border-radius: 4px; }
+        .hero-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: background 0.2s; backdrop-filter: blur(4px); }
+        .hero-arrow:hover { background: rgba(255,255,255,0.3); }
+        .hero-arrow.prev { left: 14px; }
+        .hero-arrow.next { right: 14px; }
+        .tracks-slider-wrap { position: relative; }
+        .tracks-slider { display: flex; gap: 0; overflow: hidden; }
+        .track-slide { flex: 0 0 calc(100% / 6); padding: 0 8px; box-sizing: border-box; }
+        .tracks-nav { position: absolute; top: -48px; right: 0; display: flex; gap: 6px; }
+        .track-arrow { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ccc; transition: all 0.2s; }
+        .track-arrow:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        @@media (max-width: 1200px) { .track-slide { flex: 0 0 calc(100% / 5); } }
+        @@media (max-width: 920px)  { .track-slide { flex: 0 0 calc(100% / 4); } }
+        @@media (max-width: 768px)  { .track-slide { flex: 0 0 calc(100% / 3); } }
+        @@media (max-width: 576px)  { .track-slide { flex: 0 0 calc(100% / 2); } }
+        </style>
+
         <div class="padding sr">
 
             <!-- ── Hero Slider ── -->
@@ -245,7 +113,10 @@
                                         <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
                                             <i data-feather="heart" class="active-fill"></i>
                                         </button>
-                                        <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                                        <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"
+                                                onclick="playSong(@track.Id)"
+                                                title="@track.Title çal">
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="list-content text-center">
@@ -279,7 +150,10 @@
                                     <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
                                         <i data-feather="heart" class="active-fill"></i>
                                     </button>
-                                    <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                                    <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"
+                                            onclick="playSong(@album.Id)"
+                                            title="@album.Title çal">
+                                    </button>
                                 </div>
                             </div>
                             <div class="list-content text-center">
@@ -316,7 +190,10 @@
                                             <button class="btn btn-icon no-bg no-shadow hide-row" data-toggle-class>
                                                 <i data-feather="heart" class="active-fill"></i>
                                             </button>
-                                            <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"></button>
+                                            <button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"
+                                                    onclick="playSong(@song.Id)"
+                                                    title="@song.Title çal">
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="list-content text-center">
@@ -431,12 +308,15 @@
 
 @section Scripts {
 <script>
-(function () {
-    // ── Hero Slider ──────────────────────────────────────────
+function initDiscoverPage() {
     var heroSlides = document.getElementById('heroSlides');
-    var dots       = document.querySelectorAll('.hero-dot');
-    var total      = dots.length;
-    var current    = 0;
+    var tracksSlider = document.getElementById('tracksSlider');
+    if (!heroSlides || !tracksSlider) return;
+
+    // ── Hero Slider ──────────────────────────────────────────
+    var dots    = document.querySelectorAll('.hero-dot');
+    var total   = dots.length;
+    var current = 0;
     var autoTimer;
 
     function goTo(n) {
@@ -448,33 +328,29 @@
     }
 
     function startAuto() {
+        clearInterval(autoTimer);
         autoTimer = setInterval(function () { goTo(current + 1); }, 4500);
     }
 
-    function resetAuto() {
-        clearInterval(autoTimer);
-        startAuto();
-    }
-
-    document.getElementById('heroPrev').addEventListener('click', function () { goTo(current - 1); resetAuto(); });
-    document.getElementById('heroNext').addEventListener('click', function () { goTo(current + 1); resetAuto(); });
+    var heroPrev = document.getElementById('heroPrev');
+    var heroNext = document.getElementById('heroNext');
+    if (heroPrev) heroPrev.onclick = function () { goTo(current - 1); startAuto(); };
+    if (heroNext) heroNext.onclick = function () { goTo(current + 1); startAuto(); };
     dots.forEach(function (d) {
-        d.addEventListener('click', function () { goTo(parseInt(d.dataset.index)); resetAuto(); });
+        d.onclick = function () { goTo(parseInt(d.dataset.index)); startAuto(); };
     });
-
     startAuto();
 
     // ── Tracks Slider ────────────────────────────────────────
-    var tracksSlider  = document.getElementById('tracksSlider');
-    var trackItems    = tracksSlider.querySelectorAll('.track-slide');
-    var trackCurrent  = 0;
-    var visibleCount  = 6;
+    var trackItems   = tracksSlider.querySelectorAll('.track-slide');
+    var trackCurrent = 0;
+    var visibleCount = 6;
 
     function getVisible() {
         var w = window.innerWidth;
-        if (w <= 576)  return 2;
-        if (w <= 768)  return 3;
-        if (w <= 920)  return 4;
+        if (w <= 576) return 2;
+        if (w <= 768) return 3;
+        if (w <= 920) return 4;
         return 6;
     }
 
@@ -488,19 +364,25 @@
         visibleCount = getVisible();
         var maxIdx = trackItems.length - visibleCount;
         trackCurrent = Math.max(0, Math.min(trackCurrent + dir, maxIdx));
-        var pct = (100 / visibleCount);
-        tracksSlider.style.transform = 'translateX(-' + (trackCurrent * pct) + '%)';
+        tracksSlider.style.transform = 'translateX(-' + (trackCurrent * (100 / visibleCount)) + '%)';
         tracksSlider.style.transition = 'transform 0.4s ease';
     }
 
-    document.getElementById('tracksPrev').addEventListener('click', function () { slideTrack(-1); });
-    document.getElementById('tracksNext').addEventListener('click', function () { slideTrack(1); });
+    var tracksPrev = document.getElementById('tracksPrev');
+    var tracksNext = document.getElementById('tracksNext');
+    if (tracksPrev) tracksPrev.onclick = function () { slideTrack(-1); };
+    if (tracksNext) tracksNext.onclick = function () { slideTrack(1); };
 
     applyTrackWidths();
     window.addEventListener('resize', function () { applyTrackWidths(); slideTrack(0); });
 
-    // Re-init feather icons if available
-    if (typeof feather !== 'undefined') feather.replace();
-})();
+    if (typeof feather !== 'undefined') feather.replace({ width: 16, height: 16 });
+}
+
+// Register as the current page's init so _Layout can call it on pjaxEnd
+window.pageInit = initDiscoverPage;
+
+// Run immediately on first load
+initDiscoverPage();
 </script>
 }

@@ -5,7 +5,7 @@
     var engine = new Bloodhound({
       datumTokenizer: Bloodhound.tokenizers.obj.whitespace('title'),
       queryTokenizer: Bloodhound.tokenizers.whitespace,
-      prefetch: '../assets/api/music.json'
+      prefetch: '/bepop/assets/api/music.json'
     });
     $('.typeahead').removeAttr('data-plugin').typeahead('destroy').typeahead({
         classNames: {

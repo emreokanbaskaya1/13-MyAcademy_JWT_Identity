@@ -40,6 +40,13 @@ namespace _13_MyAcademy_JWT_Identity.Context
                 .HasForeignKey(s => s.AlbumId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Song - Package ilişkisi (her şarkı bir pakete aittir)
+            builder.Entity<Song>()
+                .HasOne(s => s.Package)
+                .WithMany(p => p.Songs)
+                .HasForeignKey(s => s.PackageId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // UserSongHistory ilişkileri
             builder.Entity<UserSongHistory>()
                 .HasOne(h => h.User)
@@ -108,67 +115,68 @@ namespace _13_MyAcademy_JWT_Identity.Context
                 new Album { Id = 19, Title = "Şehr-i Hüzün", CoverImageUrl = "/bepop/assets/img/c17.jpg", ReleaseYear = 2009, ArtistId = 18 }
             );
 
-            // Seed Data - Örnek Şarkılar (farklı ContentLevel'lar)
+            // Seed Data - Örnek Şarkılar (farklı ContentLevel'lar + PackageId)
+            // PackageId matches ContentLevel since Package.Id == Package.ContentLevel in seed data
             builder.Entity<Song>().HasData(
                 // Tarkan - Karma
-                new Song { Id = 1, Title = "Şımarık", DurationInSeconds = 234, FilePath = "songs/simarik.mp3", ContentLevel = 6, AlbumId = 1 },
-                new Song { Id = 2, Title = "Kuzu Kuzu", DurationInSeconds = 258, FilePath = "songs/kuzukuzu.mp3", ContentLevel = 5, AlbumId = 1 },
-                new Song { Id = 3, Title = "Dudu", DurationInSeconds = 245, FilePath = "songs/dudu.mp3", ContentLevel = 4, AlbumId = 1 },
+                new Song { Id = 1, Title = "Şımarık", DurationInSeconds = 234, FilePath = "songs/simarik.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 1 },
+                new Song { Id = 2, Title = "Kuzu Kuzu", DurationInSeconds = 258, FilePath = "songs/kuzukuzu.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 1 },
+                new Song { Id = 3, Title = "Dudu", DurationInSeconds = 245, FilePath = "songs/dudu.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 1 },
                 // Sezen Aksu - Gülümse
-                new Song { Id = 4, Title = "Gülümse", DurationInSeconds = 300, FilePath = "songs/gulumse.mp3", ContentLevel = 3, AlbumId = 2 },
-                new Song { Id = 5, Title = "Hadi Bakalım", DurationInSeconds = 275, FilePath = "songs/hadibakalim.mp3", ContentLevel = 2, AlbumId = 2 },
+                new Song { Id = 4, Title = "Gülümse", DurationInSeconds = 300, FilePath = "songs/gulumse.mp3", ContentLevel = 3, PackageId = 3, AlbumId = 2 },
+                new Song { Id = 5, Title = "Hadi Bakalım", DurationInSeconds = 275, FilePath = "songs/hadibakalim.mp3", ContentLevel = 2, PackageId = 2, AlbumId = 2 },
                 // Barış Manço - Mançoloji
-                new Song { Id = 6, Title = "Gesi Bağları", DurationInSeconds = 312, FilePath = "songs/gesibaglari.mp3", ContentLevel = 1, AlbumId = 3 },
-                new Song { Id = 7, Title = "Dönence", DurationInSeconds = 290, FilePath = "songs/donence.mp3", ContentLevel = 6, AlbumId = 3 },
-                new Song { Id = 8, Title = "Alla Beni Pulla Beni", DurationInSeconds = 267, FilePath = "songs/allabeni.mp3", ContentLevel = 4, AlbumId = 3 },
+                new Song { Id = 6, Title = "Gesi Bağları", DurationInSeconds = 312, FilePath = "songs/gesibaglari.mp3", ContentLevel = 1, PackageId = 1, AlbumId = 3 },
+                new Song { Id = 7, Title = "Dönence", DurationInSeconds = 290, FilePath = "songs/donence.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 3 },
+                new Song { Id = 8, Title = "Alla Beni Pulla Beni", DurationInSeconds = 267, FilePath = "songs/allabeni.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 3 },
                 // Tarkan - Metamorfoz
-                new Song { Id = 9, Title = "Bounce", DurationInSeconds = 215, FilePath = "songs/bounce.mp3", ContentLevel = 5, AlbumId = 4 },
-                new Song { Id = 10, Title = "Dedikodu", DurationInSeconds = 225, FilePath = "songs/dedikodu.mp3", ContentLevel = 4, AlbumId = 4 },
+                new Song { Id = 9, Title = "Bounce", DurationInSeconds = 215, FilePath = "songs/bounce.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 4 },
+                new Song { Id = 10, Title = "Dedikodu", DurationInSeconds = 225, FilePath = "songs/dedikodu.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 4 },
                 // Ajda Pekkan - Superstar
-                new Song { Id = 11, Title = "Superstar", DurationInSeconds = 198, FilePath = "songs/superstar.mp3", ContentLevel = 3, AlbumId = 5 },
-                new Song { Id = 12, Title = "Bambaşka Biri", DurationInSeconds = 210, FilePath = "songs/bambaska.mp3", ContentLevel = 6, AlbumId = 5 },
+                new Song { Id = 11, Title = "Superstar", DurationInSeconds = 198, FilePath = "songs/superstar.mp3", ContentLevel = 3, PackageId = 3, AlbumId = 5 },
+                new Song { Id = 12, Title = "Bambaşka Biri", DurationInSeconds = 210, FilePath = "songs/bambaska.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 5 },
                 // Cem Karaca - Resimdeki Gözyaşları
-                new Song { Id = 13, Title = "Tamirci Çırağı", DurationInSeconds = 245, FilePath = "songs/tamirci.mp3", ContentLevel = 2, AlbumId = 6 },
-                new Song { Id = 14, Title = "Resimdeki Gözyaşları", DurationInSeconds = 280, FilePath = "songs/resimdeki.mp3", ContentLevel = 1, AlbumId = 6 },
+                new Song { Id = 13, Title = "Tamirci Çırağı", DurationInSeconds = 245, FilePath = "songs/tamirci.mp3", ContentLevel = 2, PackageId = 2, AlbumId = 6 },
+                new Song { Id = 14, Title = "Resimdeki Gözyaşları", DurationInSeconds = 280, FilePath = "songs/resimdeki.mp3", ContentLevel = 1, PackageId = 1, AlbumId = 6 },
                 // Teoman - Onyedi
-                new Song { Id = 15, Title = "İstanbul'da Sonbahar", DurationInSeconds = 235, FilePath = "songs/istanbul.mp3", ContentLevel = 4, AlbumId = 7 },
-                new Song { Id = 16, Title = "Papatya", DurationInSeconds = 205, FilePath = "songs/papatya.mp3", ContentLevel = 5, AlbumId = 7 },
+                new Song { Id = 15, Title = "İstanbul'da Sonbahar", DurationInSeconds = 235, FilePath = "songs/istanbul.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 7 },
+                new Song { Id = 16, Title = "Papatya", DurationInSeconds = 205, FilePath = "songs/papatya.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 7 },
                 // Sertab Erener - Every Way That I Can
-                new Song { Id = 17, Title = "Every Way That I Can", DurationInSeconds = 180, FilePath = "songs/everyway.mp3", ContentLevel = 3, AlbumId = 8 },
-                new Song { Id = 18, Title = "Leave", DurationInSeconds = 220, FilePath = "songs/leave.mp3", ContentLevel = 6, AlbumId = 8 },
+                new Song { Id = 17, Title = "Every Way That I Can", DurationInSeconds = 180, FilePath = "songs/everyway.mp3", ContentLevel = 3, PackageId = 3, AlbumId = 8 },
+                new Song { Id = 18, Title = "Leave", DurationInSeconds = 220, FilePath = "songs/leave.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 8 },
                 // Hadise - Hadise
-                new Song { Id = 19, Title = "Düm Tek Tek", DurationInSeconds = 178, FilePath = "songs/dumtek.mp3", ContentLevel = 6, AlbumId = 9 },
-                new Song { Id = 20, Title = "Superman", DurationInSeconds = 195, FilePath = "songs/superman.mp3", ContentLevel = 4, AlbumId = 9 },
+                new Song { Id = 19, Title = "Düm Tek Tek", DurationInSeconds = 178, FilePath = "songs/dumtek.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 9 },
+                new Song { Id = 20, Title = "Superman", DurationInSeconds = 195, FilePath = "songs/superman.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 9 },
                 // Müslüm Gürses - Kâğıt Helva
-                new Song { Id = 21, Title = "Kâğıt Helva", DurationInSeconds = 310, FilePath = "songs/kagithelva.mp3", ContentLevel = 5, AlbumId = 10 },
-                new Song { Id = 22, Title = "Affet", DurationInSeconds = 285, FilePath = "songs/affet.mp3", ContentLevel = 3, AlbumId = 10 },
+                new Song { Id = 21, Title = "Kâğıt Helva", DurationInSeconds = 310, FilePath = "songs/kagithelva.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 10 },
+                new Song { Id = 22, Title = "Affet", DurationInSeconds = 285, FilePath = "songs/affet.mp3", ContentLevel = 3, PackageId = 3, AlbumId = 10 },
                 // Ceza - Rapstar
-                new Song { Id = 23, Title = "Holocaust", DurationInSeconds = 248, FilePath = "songs/holocaust.mp3", ContentLevel = 2, AlbumId = 11 },
-                new Song { Id = 24, Title = "Neyim Var Ki", DurationInSeconds = 230, FilePath = "songs/neyimvarki.mp3", ContentLevel = 6, AlbumId = 11 },
+                new Song { Id = 23, Title = "Holocaust", DurationInSeconds = 248, FilePath = "songs/holocaust.mp3", ContentLevel = 2, PackageId = 2, AlbumId = 11 },
+                new Song { Id = 24, Title = "Neyim Var Ki", DurationInSeconds = 230, FilePath = "songs/neyimvarki.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 11 },
                 // Duman - Darmaduman
-                new Song { Id = 25, Title = "Senden Daha Güzel", DurationInSeconds = 256, FilePath = "songs/sendendahaguzel.mp3", ContentLevel = 4, AlbumId = 12 },
-                new Song { Id = 26, Title = "Yürekten", DurationInSeconds = 242, FilePath = "songs/yurekten.mp3", ContentLevel = 6, AlbumId = 12 },
+                new Song { Id = 25, Title = "Senden Daha Güzel", DurationInSeconds = 256, FilePath = "songs/sendendahaguzel.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 12 },
+                new Song { Id = 26, Title = "Yürekten", DurationInSeconds = 242, FilePath = "songs/yurekten.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 12 },
                 // Sagopa Kajmer - Bir Pesimistin Gözyaşları
-                new Song { Id = 27, Title = "Baytar", DurationInSeconds = 268, FilePath = "songs/baytar.mp3", ContentLevel = 1, AlbumId = 13 },
-                new Song { Id = 28, Title = "Düşün Ki", DurationInSeconds = 295, FilePath = "songs/dusunki.mp3", ContentLevel = 5, AlbumId = 13 },
+                new Song { Id = 27, Title = "Baytar", DurationInSeconds = 268, FilePath = "songs/baytar.mp3", ContentLevel = 1, PackageId = 1, AlbumId = 13 },
+                new Song { Id = 28, Title = "Düşün Ki", DurationInSeconds = 295, FilePath = "songs/dusunki.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 13 },
                 // Mor ve Ötesi - Dünya Yalan Söylüyor
-                new Song { Id = 29, Title = "Cambaz", DurationInSeconds = 218, FilePath = "songs/cambaz.mp3", ContentLevel = 6, AlbumId = 14 },
-                new Song { Id = 30, Title = "Dünya Yalan Söylüyor", DurationInSeconds = 240, FilePath = "songs/dunyayalan.mp3", ContentLevel = 3, AlbumId = 14 },
+                new Song { Id = 29, Title = "Cambaz", DurationInSeconds = 218, FilePath = "songs/cambaz.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 14 },
+                new Song { Id = 30, Title = "Dünya Yalan Söylüyor", DurationInSeconds = 240, FilePath = "songs/dunyayalan.mp3", ContentLevel = 3, PackageId = 3, AlbumId = 14 },
                 // Nilüfer - Nilüfer
-                new Song { Id = 31, Title = "Dünya Dönüyor", DurationInSeconds = 230, FilePath = "songs/dunyadonuyor.mp3", ContentLevel = 4, AlbumId = 15 },
-                new Song { Id = 32, Title = "Geceler", DurationInSeconds = 255, FilePath = "songs/geceler.mp3", ContentLevel = 6, AlbumId = 15 },
+                new Song { Id = 31, Title = "Dünya Dönüyor", DurationInSeconds = 230, FilePath = "songs/dunyadonuyor.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 15 },
+                new Song { Id = 32, Title = "Geceler", DurationInSeconds = 255, FilePath = "songs/geceler.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 15 },
                 // Yalın - Ellerine Sağlık
-                new Song { Id = 33, Title = "Ellerine Sağlık", DurationInSeconds = 220, FilePath = "songs/ellerinesaglik.mp3", ContentLevel = 5, AlbumId = 16 },
-                new Song { Id = 34, Title = "Aşk Laftan Anlamaz", DurationInSeconds = 238, FilePath = "songs/asklaftan.mp3", ContentLevel = 2, AlbumId = 16 },
+                new Song { Id = 33, Title = "Ellerine Sağlık", DurationInSeconds = 220, FilePath = "songs/ellerinesaglik.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 16 },
+                new Song { Id = 34, Title = "Aşk Laftan Anlamaz", DurationInSeconds = 238, FilePath = "songs/asklaftan.mp3", ContentLevel = 2, PackageId = 2, AlbumId = 16 },
                 // Gripin - M.S. 05.03.2010
-                new Song { Id = 35, Title = "Böyle Kahpedir Dünya", DurationInSeconds = 252, FilePath = "songs/boylekahpe.mp3", ContentLevel = 6, AlbumId = 17 },
-                new Song { Id = 36, Title = "Durma Yağmur Durma", DurationInSeconds = 227, FilePath = "songs/durmayagmur.mp3", ContentLevel = 3, AlbumId = 17 },
+                new Song { Id = 35, Title = "Böyle Kahpedir Dünya", DurationInSeconds = 252, FilePath = "songs/boylekahpe.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 17 },
+                new Song { Id = 36, Title = "Durma Yağmur Durma", DurationInSeconds = 227, FilePath = "songs/durmayagmur.mp3", ContentLevel = 3, PackageId = 3, AlbumId = 17 },
                 // MFÖ - Ele Güne Karşı
-                new Song { Id = 37, Title = "Ele Güne Karşı", DurationInSeconds = 210, FilePath = "songs/elegunekarsi.mp3", ContentLevel = 4, AlbumId = 18 },
-                new Song { Id = 38, Title = "Ali Desidero", DurationInSeconds = 198, FilePath = "songs/alidesidero.mp3", ContentLevel = 6, AlbumId = 18 },
+                new Song { Id = 37, Title = "Ele Güne Karşı", DurationInSeconds = 210, FilePath = "songs/elegunekarsi.mp3", ContentLevel = 4, PackageId = 4, AlbumId = 18 },
+                new Song { Id = 38, Title = "Ali Desidero", DurationInSeconds = 198, FilePath = "songs/alidesidero.mp3", ContentLevel = 6, PackageId = 6, AlbumId = 18 },
                 // Manga - Şehr-i Hüzün
-                new Song { Id = 39, Title = "Dünyanın Sonuna Doğmuşum", DurationInSeconds = 235, FilePath = "songs/dunyaninsonu.mp3", ContentLevel = 1, AlbumId = 19 },
-                new Song { Id = 40, Title = "Bir Kadın Çizeceksin", DurationInSeconds = 248, FilePath = "songs/birkadin.mp3", ContentLevel = 5, AlbumId = 19 }
+                new Song { Id = 39, Title = "Dünyanın Sonuna Doğmuşum", DurationInSeconds = 235, FilePath = "songs/dunyaninsonu.mp3", ContentLevel = 1, PackageId = 1, AlbumId = 19 },
+                new Song { Id = 40, Title = "Bir Kadın Çizeceksin", DurationInSeconds = 248, FilePath = "songs/birkadin.mp3", ContentLevel = 5, PackageId = 5, AlbumId = 19 }
             );
         }
     }

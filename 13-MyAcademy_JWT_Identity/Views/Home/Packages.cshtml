@@ -4,7 +4,52 @@
 }
 
 <div class="page-content page-container" id="page-content">
+    <style>
+    .pkg-card {
+        border-radius: 16px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .pkg-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        border-color: rgba(255,255,255,0.2);
+    }
+    .pkg-card.is-current {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 1px #6366f1, 0 16px 40px rgba(99,102,241,0.25);
+    }
+    .pkg-header { padding: 28px 20px 20px; text-align: center; }
+    .pkg-name { font-size: 1.15rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+    .pkg-badge-current { font-size: 0.68rem; background: #6366f1; color: #fff; border-radius: 20px; padding: 2px 10px; display: inline-block; margin-bottom: 6px; }
+    .pkg-level-circle { width: 68px; height: 68px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 1.7rem; font-weight: 800; color: #fff; }
+    .pkg-features { flex: 1; padding: 0 20px 20px; list-style: none; margin: 0; }
+    .pkg-features li { font-size: 0.82rem; color: rgba(255,255,255,0.55); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 7px; }
+    .pkg-features li:last-child { border-bottom: none; }
+    .pkg-features .check { color: #4ade80; font-size: 0.9rem; }
+    .pkg-features .lock  { color: rgba(255,255,255,0.2); font-size: 0.9rem; }
+    .pkg-footer { padding: 16px 20px 22px; text-align: center; }
+    .btn-select-pkg { width: 100%; border-radius: 30px; font-weight: 600; font-size: 0.85rem; padding: 10px 0; border: none; cursor: pointer; transition: opacity 0.2s, transform 0.15s; }
+    .btn-select-pkg:hover { opacity: 0.85; transform: scale(1.02); }
+    .btn-select-pkg:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* gradient per tier */
+    .gd-elite    { background: linear-gradient(135deg, #c62828, #e53935); }
+    .gd-premium  { background: linear-gradient(135deg, #f57f17, #ffb300); }
+    .gd-gold     { background: linear-gradient(135deg, #00838f, #00bcd4); }
+    .gd-standard { background: linear-gradient(135deg, #283593, #3949ab); }
+    .gd-basic    { background: linear-gradient(135deg, #37474f, #546e7a); }
+    .gd-free     { background: linear-gradient(135deg, #1b1b2f, #2d2d44); }
+    </style>
+
     <div class="padding sr">
+
+        <!-- Hero -->
         <div class="page-hero">
             <div class="media bg-media">
                 <div class="media-content" style="background-image:url(/bepop/assets/img/b8.jpg)"></div>
@@ -15,6 +60,11 @@
                     <p>Size uygun paketi seçin ve müzik dünyasını keşfedin</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Current Package Info Banner (auth only) -->
+        <div id="currentPkgBanner" style="display:none;" class="alert mt-4 mb-0"
+             style="border-radius:12px; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3);">
         </div>
 
         <!-- Package Cards -->
@@ -29,32 +79,74 @@
         <div class="row">
             @foreach (var pkg in Model)
             {
-                var badgeClass = pkg.ContentLevel switch
+                var gradClass = pkg.ContentLevel switch
                 {
-                    1 => "gd-danger",
-                    2 => "gd-warning",
-                    3 => "gd-info",
-                    4 => "gd-primary",
-                    5 => "gd-secondary",
-                    _ => "bg-dark"
+                    1 => "gd-elite",
+                    2 => "gd-premium",
+                    3 => "gd-gold",
+                    4 => "gd-standard",
+                    5 => "gd-basic",
+                    _ => "gd-free"
                 };
 
-                var accessLevels = string.Join("-", Enumerable.Range(pkg.ContentLevel, 7 - pkg.ContentLevel));
+                var accessCount = 7 - pkg.ContentLevel;
+                var tierLabel   = pkg.ContentLevel switch
+                {
+                    1 => "Tüm içerikler (6 tier)",
+                    2 => "Premium ve altı (5 tier)",
+                    3 => "Gold ve altı (4 tier)",
+                    4 => "Standard ve altı (3 tier)",
+                    5 => "Basic ve Free (2 tier)",
+                    _ => "Yalnızca Free içerikler"
+                };
 
-                <div class="col-md-4 col-lg-2 mb-4">
-                    <div class="card text-center b-a">
-                        <div class="card-header @badgeClass text-white">
-                            <h5 class="mb-0">@pkg.Name</h5>
+                <div class="col-6 col-md-4 col-lg-2 mb-4 d-flex">
+                    <div class="pkg-card w-100" id="pkg-card-@pkg.Id" data-pkg-id="@pkg.Id">
+                        <div class="pkg-header">
+                            <div id="current-badge-@pkg.Id" class="pkg-badge-current" style="display:none;">✓ Mevcut Paket</div>
+                            <div class="pkg-level-circle @gradClass">@pkg.ContentLevel</div>
+                            <div class="pkg-name text-white">@pkg.Name</div>
                         </div>
-                        <div class="card-body bg-dark">
-                            <div class="py-3">
-                                <span class="display-4 font-weight-bold text-white">@pkg.ContentLevel</span>
-                                <div class="text-muted text-sm mt-1">Content Level</div>
-                            </div>
-                            <ul class="list-unstyled text-muted text-sm l-h-2x">
-                                <li>Access: @accessLevels</li>
-                                <li>@(7 - pkg.ContentLevel) tier content</li>
-                            </ul>
+
+                        <ul class="pkg-features">
+                            <li>
+                                <span class="check">✓</span>
+                                <span>@tierLabel</span>
+                            </li>
+                            <li>
+                                <span class="check">✓</span>
+                                <span>@accessCount paket seviyesine erişim</span>
+                            </li>
+                            @if (pkg.ContentLevel == 1)
+                            {
+                                <li><span class="check">✓</span><span>Tüm Elite içerikler</span></li>
+                                <li><span class="check">✓</span><span>Offline dinleme</span></li>
+                            }
+                            else if (pkg.ContentLevel <= 3)
+                            {
+                                <li><span class="check">✓</span><span>HD ses kalitesi</span></li>
+                            }
+                            @if (pkg.ContentLevel > 1)
+                            {
+                                for (int i = 1; i < pkg.ContentLevel; i++)
+                                {
+                                    var lockedTier = i switch { 1 => "Elite", 2 => "Premium", 3 => "Gold", _ => "" };
+                                    if (!string.IsNullOrEmpty(lockedTier))
+                                    {
+                                        <li><span class="lock">✗</span><span class="text-muted opacity-50">@lockedTier içerikler</span></li>
+                                    }
+                                }
+                            }
+                        </ul>
+
+                        <div class="pkg-footer">
+                            <button class="btn-select-pkg @gradClass text-white"
+                                    id="btn-pkg-@pkg.Id"
+                                    onclick="selectPackage(@pkg.Id, '@pkg.Name')"
+                                    data-pkg-id="@pkg.Id"
+                                    data-pkg-name="@pkg.Name">
+                                Bu Paketi Seç
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -75,20 +167,214 @@
                 <table class="table table-dark table-bordered text-center">
                     <thead>
                         <tr>
-                            <th>Package</th>
-                            <th>Access Levels</th>
+                            <th>Paket</th>
+                            <th>Elite</th>
+                            <th>Premium</th>
+                            <th>Gold</th>
+                            <th>Standard</th>
+                            <th>Basic</th>
+                            <th>Free</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td><span class="badge badge-danger">Elite</span></td><td>1-2-3-4-5-6</td></tr>
-                        <tr><td><span class="badge badge-warning">Premium</span></td><td>2-3-4-5-6</td></tr>
-                        <tr><td><span class="badge badge-info">Gold</span></td><td>3-4-5-6</td></tr>
-                        <tr><td><span class="badge badge-primary">Standard</span></td><td>4-5-6</td></tr>
-                        <tr><td><span class="badge badge-secondary">Basic</span></td><td>5-6</td></tr>
-                        <tr><td><span class="badge badge-light">Free</span></td><td>6</td></tr>
+                        <tr>
+                            <td><span class="badge badge-danger">Elite</span></td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-warning">Premium</span></td>
+                            <td class="text-muted">✗</td><td class="text-success">✓</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-info">Gold</span></td>
+                            <td class="text-muted">✗</td><td class="text-muted">✗</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-primary">Standard</span></td>
+                            <td class="text-muted">✗</td><td class="text-muted">✗</td>
+                            <td class="text-muted">✗</td><td class="text-success">✓</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-secondary">Basic</span></td>
+                            <td class="text-muted">✗</td><td class="text-muted">✗</td>
+                            <td class="text-muted">✗</td><td class="text-muted">✗</td>
+                            <td class="text-success">✓</td><td class="text-success">✓</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-light">Free</span></td>
+                            <td class="text-muted">✗</td><td class="text-muted">✗</td>
+                            <td class="text-muted">✗</td><td class="text-muted">✗</td>
+                            <td class="text-muted">✗</td><td class="text-success">✓</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </div>
+
+@section Scripts {
+<script>
+function initPackagesPage() {
+    var token = localStorage.getItem('jwtToken');
+    var currentPkgLevel = null;
+
+    // Reset all buttons to default state first (for PJAX re-init)
+    document.querySelectorAll('.btn-select-pkg').forEach(function (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Bu Paketi Seç';
+    });
+    document.querySelectorAll('[id^="current-badge-"]').forEach(function (el) {
+        el.style.display = 'none';
+    });
+    document.querySelectorAll('.pkg-card').forEach(function (el) {
+        el.classList.remove('is-current');
+    });
+
+    if (token) {
+        try {
+            var payload = JSON.parse(atob(token.split('.')[1]));
+            var pkgName  = payload['PackageName'] || 'Free';
+            var pkgLevel = parseInt(payload['PackageLevel'] || '6', 10);
+            currentPkgLevel = pkgLevel;
+            var pkgId = pkgLevel;
+
+            // Mark current package card
+            var currentBadge = document.getElementById('current-badge-' + pkgId);
+            var currentCard  = document.getElementById('pkg-card-' + pkgId);
+            var currentBtn   = document.getElementById('btn-pkg-' + pkgId);
+
+            if (currentBadge) currentBadge.style.display = 'inline-block';
+            if (currentCard)  currentCard.classList.add('is-current');
+            if (currentBtn) {
+                currentBtn.textContent = '✓ Mevcut Paket';
+                currentBtn.disabled = true;
+            }
+
+            // Show info banner
+            var banner = document.getElementById('currentPkgBanner');
+            if (banner) {
+                banner.style.display  = 'block';
+                banner.style.cssText += 'border-radius:12px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);color:#c7d2fe;padding:14px 20px;margin-top:24px;';
+                banner.innerHTML = '<strong>Mevcut paketiniz:</strong> ' + pkgName +
+                    ' &nbsp;|&nbsp; Aşağıdan istediğiniz pakete geçebilirsiniz.';
+            }
+        } catch (e) { console.warn('JWT parse error:', e); }
+    }
+
+    if (typeof feather !== 'undefined') feather.replace({ width: 16, height: 16 });
+}
+
+// ── Select Package ────────────────────────────────────────────────
+window.selectPackage = function (packageId, packageName) {
+    var token = localStorage.getItem('jwtToken');
+
+    if (!token) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Giriş Gerekli',
+            text: 'Paket seçmek için önce giriş yapmalısınız.',
+            confirmButtonText: 'Giriş Yap',
+            confirmButtonColor: '#6366f1',
+            showCancelButton: true,
+            cancelButtonText: 'İptal',
+            cancelButtonColor: '#374151',
+            background: '#1a1a2e',
+            color: '#e0e0e0'
+        }).then(function (r) {
+            if (r.isConfirmed) window.location.href = '/Home/SignIn';
+        });
+        return;
+    }
+
+    Swal.fire({
+        icon: 'question',
+        title: packageName + ' Paketine Geç',
+        text: 'Bu pakete geçmek istediğinizden emin misiniz?',
+        confirmButtonText: 'Evet, Geç!',
+        confirmButtonColor: '#6366f1',
+        showCancelButton: true,
+        cancelButtonText: 'İptal',
+        cancelButtonColor: '#374151',
+        background: '#1a1a2e',
+        color: '#e0e0e0'
+    }).then(function (result) {
+        if (!result.isConfirmed) return;
+
+        var btn = document.getElementById('btn-pkg-' + packageId);
+        if (btn) { btn.disabled = true; btn.textContent = 'Güncelleniyor...'; }
+
+        fetch('/api/users/package', {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ packageId: packageId })
+        })
+        .then(function (response) {
+            if (response.ok) {
+                return response.json().then(function (data) {
+                    if (data.token) localStorage.setItem('jwtToken', data.token);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Paket Güncellendi! 🎉',
+                        html: '<strong>' + packageName + '</strong> paketine başarıyla geçtiniz.',
+                        confirmButtonText: 'Harika!',
+                        confirmButtonColor: '#6366f1',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        background: '#1a1a2e',
+                        color: '#e0e0e0'
+                    }).then(function () {
+                        window.location.reload();
+                    });
+                });
+            }
+
+            if (response.status === 401) {
+                localStorage.removeItem('jwtToken');
+                Swal.fire({
+                    icon: 'warning', title: 'Oturum Süresi Doldu',
+                    text: 'Lütfen tekrar giriş yapın.',
+                    confirmButtonColor: '#6366f1', background: '#1a1a2e', color: '#e0e0e0'
+                }).then(function () { window.location.href = '/Home/SignIn'; });
+                return;
+            }
+
+            return response.json().then(function (err) {
+                Swal.fire({
+                    icon: 'error', title: 'Hata',
+                    text: err.message || 'Paket güncellenirken hata oluştu.',
+                    confirmButtonColor: '#6366f1', background: '#1a1a2e', color: '#e0e0e0'
+                });
+                if (btn) { btn.disabled = false; btn.textContent = 'Bu Paketi Seç'; }
+            });
+        })
+        .catch(function () {
+            Swal.fire({
+                icon: 'error', title: 'Bağlantı Hatası',
+                text: 'Sunucuya bağlanılamadı.',
+                confirmButtonColor: '#6366f1', background: '#1a1a2e', color: '#e0e0e0'
+            });
+            if (btn) { btn.disabled = false; btn.textContent = 'Bu Paketi Seç'; }
+        });
+    });
+};
+
+// Register as the current page's init so _Layout can call it on pjaxEnd
+window.pageInit = initPackagesPage;
+
+// Run on first load
+initPackagesPage();
+</script>
+}

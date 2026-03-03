@@ -2,33 +2,309 @@
     ViewData["Title"] = "History";
 }
 
+@section Styles {
+<style>
+    .stat-pill {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 14px 22px;
+        min-width: 100px;
+    }
+    .stat-pill .num { font-size: 1.7rem; font-weight: 700; color: #6366f1; line-height: 1; }
+    .stat-pill .lbl { font-size: 0.72rem; color: #6b7280; margin-top: 4px; }
+
+    .list-item { cursor: pointer; }
+
+    /* Skeleton */
+    .skel {
+        background: linear-gradient(90deg,
+            rgba(255,255,255,0.04) 25%,
+            rgba(255,255,255,0.09) 50%,
+            rgba(255,255,255,0.04) 75%);
+        background-size: 200% 100%;
+        animation: shim 1.4s infinite;
+        border-radius: 4px;
+    }
+    @@keyframes shim {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .empty-state { text-align:center; padding:60px 20px; color:#4b5563; }
+
+    /* Kapak fotoğrafları için img overlay */
+    #historyList .media { overflow: hidden; }
+    #historyList .media img.cover-img {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
+    }
+    #historyList .list-item {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+</style>
+}
+
 <div class="page-content page-container" id="page-content">
-    <div class="padding sr">
-        <div class="page-hero">
-            <div class="media bg-media">
-                <div class="media-content" style="background-image:url(/bepop/assets/img/b3.jpg)"></div>
-            </div>
-            <div class="pos-rlt">
-                <h2 class="display-3 font-weight-bold text-white">Listening History</h2>
-                <div class="col-6 px-0 py-3 text-muted">
-                    <p>Dinlediğin şarkıların kaydını burada görebilirsin.</p>
-                </div>
+    <div class="padding">
+
+        <!-- Başlık -->
+        <div class="heading pt-4 pb-2">
+            <div>
+                <h4 class="text-highlight">Listening History</h4>
+                <p class="text-muted" style="font-size:0.85rem;">Dinlediğin şarkıların kaydını burada görebilirsin.</p>
             </div>
         </div>
 
-        <div class="heading pt-5 pb-3 d-flex">
+        <!-- Stats -->
+        <div id="statsRow" style="display:none; gap:12px; flex-wrap:wrap; margin:0 0 16px;">
+            <div class="stat-pill"><div class="num" id="statTotal">—</div><div class="lbl">Toplam Dinleme</div></div>
+            <div class="stat-pill"><div class="num" id="statUnique">—</div><div class="lbl">Farklı Şarkı</div></div>
+            <div class="stat-pill"><div class="num" id="statArtists">—</div><div class="lbl">Farklı Sanatçı</div></div>
+        </div>
+
+        <!-- Recently Played başlık + temizle -->
+        <div class="heading pb-3 d-flex align-items-center">
             <div>
-                <div class="text-muted sr-item">Your</div>
-                <h5 class="text-highlight sr-item">Recently Played</h5>
+                <div class="text-muted">Your</div>
+                <h5 class="text-highlight">Recently Played</h5>
             </div>
             <span class="flex"></span>
+            <button id="clearBtn" class="btn btn-sm btn-outline-danger"
+                    style="display:none; border-radius:20px; font-size:0.75rem;">
+                <i data-feather="trash-2" style="width:13px;height:13px;" class="mr-1"></i>Temizle
+            </button>
         </div>
 
-        <div id="historyContainer" class="row list-row list-index">
-            <div class="col-12 text-center text-muted py-5">
-                <i data-feather="music" style="width:48px;height:48px;"></i>
-                <p class="mt-3">No listening history yet. Start playing music!</p>
-            </div>
+        <!-- Skeleton — baştan gizli, JS açar -->
+        <div id="skeleton" class="row list-row list-index" style="display:none;">
+            @for (int s = 0; s < 5; s++)
+            {
+                <div class="col-12">
+                    <div class="list-item r" style="pointer-events:none;">
+                        <div class="media">
+                            <div class="media-content skel"></div>
+                        </div>
+                        <div class="list-content text-center">
+                            <div class="list-body">
+                                <div class="skel" style="height:13px;width:60%;margin:6px auto 4px;"></div>
+                                <div class="skel" style="height:11px;width:40%;margin:0 auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
+
+        <!-- Gerçek liste -->
+        <div id="historyList" class="row list-row list-index" style="display:none;"></div>
+
+        <!-- Boş -->
+        <div id="emptyState" class="empty-state" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="1.2" style="opacity:.35;">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            </svg>
+            <p style="font-size:1rem;color:#6b7280;margin:12px 0 4px;">Henüz dinleme geçmişin yok.</p>
+            <p style="font-size:0.82rem;color:#4b5563;">Bir şarkı çalmaya başla!</p>
+            <a asp-controller="Home" asp-action="Discover"
+               class="btn btn-rounded gd-primary text-white mt-3">Keşfet</a>
+        </div>
+
+        <!-- Giriş yok -->
+        <div id="notLoggedIn" class="empty-state" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="1.2" style="opacity:.35;">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            <p style="font-size:1rem;color:#6b7280;margin:12px 0;">Geçmişini görmek için giriş yap.</p>
+            <a asp-controller="Home" asp-action="SignIn"
+               class="btn btn-rounded gd-primary text-white mt-2">Giriş Yap</a>
+        </div>
+
     </div>
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    'use strict';
+
+    function initHistoryPage() {
+        var token       = localStorage.getItem('jwtToken');
+        var skeleton    = document.getElementById('skeleton');
+        var historyList = document.getElementById('historyList');
+        var emptyState  = document.getElementById('emptyState');
+        var notLogged   = document.getElementById('notLoggedIn');
+        var statsRow    = document.getElementById('statsRow');
+        var clearBtn    = document.getElementById('clearBtn');
+
+        // Eğer bu sayfa DOM'da değilse çık (başka sayfada pjaxEnd tetiklenmiş olabilir)
+        if (!historyList) return;
+
+        function show(el) { if (el) el.style.display = ''; }
+        function hide(el) { if (el) el.style.display = 'none'; }
+
+        // Önce her şeyi sıfırla
+        hide(skeleton);
+        hide(historyList);
+        hide(emptyState);
+        hide(notLogged);
+        hide(statsRow);
+        hide(clearBtn);
+        historyList.innerHTML = '';
+
+        function esc(v) {
+            return String(v || '')
+                .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function timeAgo(d) {
+            // PlayedAt UTC olarak kaydedildiği için UTC string olarak parse et
+            var dateStr = String(d);
+            if (!dateStr.endsWith('Z') && !dateStr.includes('+')) {
+                dateStr += 'Z'; // UTC olarak işaretle
+            }
+            var s = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+            if (s < 60)     return 'Az önce';
+            if (s < 3600)   return Math.floor(s / 60) + ' dk önce';
+            if (s < 86400)  return Math.floor(s / 3600) + ' sa önce';
+            if (s < 604800) return Math.floor(s / 86400) + ' gün önce';
+            return new Date(dateStr).toLocaleDateString('tr-TR', { day:'numeric', month:'short', year:'numeric' });
+        }
+
+        if (!token) {
+            show(notLogged);
+            if (typeof feather !== 'undefined') feather.replace({ width: 16, height: 16 });
+            return;
+        }
+
+        // Token var — skeleton göster, fetch başlat
+        show(skeleton);
+
+        fetch('/api/usersonghistories', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(function (res) {
+            if (res.status === 401) {
+                localStorage.removeItem('jwtToken');
+                hide(skeleton);
+                show(notLogged);
+                if (typeof feather !== 'undefined') feather.replace({ width: 16, height: 16 });
+                return null;
+            }
+            if (!res.ok) {
+                hide(skeleton);
+                show(emptyState);
+                return null;
+            }
+            return res.json();
+        })
+        .then(function (data) {
+            if (data === null || data === undefined) return;
+            hide(skeleton);
+
+            var items = data.items || data; // geriye dönük uyumluluk
+            if (!Array.isArray(items) || items.length === 0) {
+                show(emptyState);
+                if (typeof feather !== 'undefined') feather.replace({ width: 16, height: 16 });
+                return;
+            }
+
+            // Stats — API'den gelen gerçek sayılar
+            document.getElementById('statTotal').textContent   = data.totalPlays   || items.length;
+            document.getElementById('statUnique').textContent  = data.uniqueSongs  || new Set(items.map(function(d) { return d.songId; })).size;
+            document.getElementById('statArtists').textContent = data.uniqueArtists|| new Set(items.map(function(d) { return d.artistName; })).size;
+            statsRow.style.display = 'flex';
+
+            var html = '';
+            items.forEach(function (item) {
+                var title    = esc(item.songTitle || '—');
+                var artist   = esc(item.artistName || '—');
+                var rawCover = item.artistImageUrl;
+                var cover    = esc(rawCover || '/bepop/assets/img/c0.jpg');
+                var songId   = item.songId || 0;
+                var when     = item.playedAt ? esc(timeAgo(item.playedAt)) : '';
+                var fullDate = item.playedAt ? esc(new Date(String(item.playedAt).endsWith('Z') ? item.playedAt : item.playedAt + 'Z').toLocaleString('tr-TR')) : '';
+
+                console.log('[History] songTitle:', item.songTitle, '| coverImageUrl:', item.coverImageUrl, '| artistImageUrl:', item.artistImageUrl);
+
+                html +=
+                    '<div class="col-12">' +
+                      '<div class="list-item r">' +
+                        '<div class="media">' +
+                          '<img class="cover-img" src="' + cover + '" alt="' + title + '"' +
+                            ' onerror="this.src=\'/bepop/assets/img/c0.jpg\'">' +
+                          '<div class="media-action media-action-overlay">' +
+                            '<button class="btn btn-raised btn-icon btn-rounded bg--white btn-play"' +
+                              ' onclick="playSong(' + songId + ')" title="' + title + ' dinle">' +
+                            '</button>' +
+                          '</div>' +
+                        '</div>' +
+                        '<div class="list-content text-center">' +
+                          '<div class="list-body">' +
+                            '<span class="list-title title h-1x">' + title + '</span>' +
+                            '<span class="list-subtitle d-block text-muted h-1x subtitle">' + artist + '</span>' +
+                          '</div>' +
+                        '</div>' +
+                        '<div class="list-action show-row">' +
+                          '<div class="d-flex align-items-center">' +
+                            '<div class="px-3 text-sm text-muted d-none d-md-block" title="' + fullDate + '">' + when + '</div>' +
+                          '</div>' +
+                        '</div>' +
+                      '</div>' +
+                    '</div>';
+            });
+
+            historyList.innerHTML = html;
+            show(historyList);
+            show(clearBtn);
+            if (typeof feather !== 'undefined') feather.replace({ width: 16, height: 16 });
+        })
+        .catch(function (err) {
+            console.error('History fetch error:', err);
+            hide(skeleton);
+            show(emptyState);
+        });
+
+        clearBtn && clearBtn.addEventListener('click', function () {
+            if (typeof Swal === 'undefined') return;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Geçmişi Temizle',
+                text: 'Tüm dinleme geçmişin silinecek. Emin misin?',
+                confirmButtonText: 'Evet, Temizle',
+                confirmButtonColor: '#ef4444',
+                showCancelButton: true,
+                cancelButtonText: 'İptal',
+                cancelButtonColor: '#374151',
+                background: '#1a1a2e',
+                color: '#e0e0e0'
+            }).then(function (r) {
+                if (r.isConfirmed) {
+                    hide(historyList);
+                    hide(clearBtn);
+                    hide(statsRow);
+                    show(emptyState);
+                }
+            });
+        });
+    }
+
+    // İlk yüklemede çalıştır
+    initHistoryPage();
+    window._pageInitRan = true;
+
+    // PJAX ile her navigasyonda tekrar çalıştır
+    window.pageInit = initHistoryPage;
+})();
+</script>
+}

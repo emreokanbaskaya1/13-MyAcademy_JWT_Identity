@@ -213,6 +213,18 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
             return View();
         }
 
+        public IActionResult Statistics()
+        {
+            ViewData["Title"] = "İstatistikler";
+            return View();
+        }
+
+        public IActionResult Recommendations()
+        {
+            ViewData["Title"] = "Öneriler";
+            return View();
+        }
+
         public async Task<IActionResult> Profile()
         {
             ViewData["Title"] = "Profilim";

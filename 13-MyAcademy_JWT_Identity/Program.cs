@@ -2,6 +2,8 @@ using _13_MyAcademy_JWT_Identity.Authorization;
 using _13_MyAcademy_JWT_Identity.Context;
 using _13_MyAcademy_JWT_Identity.Entities;
 using _13_MyAcademy_JWT_Identity.Services.JwtServices;
+using _13_MyAcademy_JWT_Identity.Services.PackageAccess;
+using _13_MyAcademy_JWT_Identity.Services.Recommendation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IPackageAccessService, PackageAccessService>();
 builder.Services.AddSingleton<IAuthorizationHandler, PackageAuthorizationHandler>();
-
+builder.Services.AddSingleton<ISongRecommendationService, SongRecommendationService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -46,7 +49,24 @@ builder.Services.AddAuthentication(config =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
         ClockSkew = TimeSpan.Zero,
         NameClaimType = ClaimTypes.Name
+    };
 
+    // Allow JWT from query string for audio streaming
+    // The browser's <audio> element cannot send Authorization headers,
+    // so we read the token from the '?t=' query parameter for stream endpoints.
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = ctx =>
+        {
+            var path = ctx.HttpContext.Request.Path;
+            if (path.StartsWithSegments("/api/songs/stream"))
+            {
+                var qToken = ctx.HttpContext.Request.Query["t"].FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(qToken))
+                    ctx.Token = qToken;
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -118,5 +138,12 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllers();
+
+// ML.NET modelini uygulama başlatılırken eğit
+using (var scope = app.Services.CreateScope())
+{
+    var recommendation = scope.ServiceProvider.GetRequiredService<ISongRecommendationService>();
+    recommendation.TrainModelAsync().GetAwaiter().GetResult();
+}
 
 app.Run();

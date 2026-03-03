@@ -1,0 +1,466 @@
+@{
+    ViewData["Title"] = "Ýstatistikler";
+}
+
+@section Styles {
+<style>
+    .stat-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 22px 26px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        transition: border-color .2s;
+    }
+    .stat-card:hover { border-color: rgba(99,102,241,0.45); }
+    .stat-card .icon-wrap {
+        width: 48px; height: 48px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .stat-card .num  { font-size: 2rem; font-weight: 700; color: #fff; line-height: 1; }
+    .stat-card .lbl  { font-size: 0.75rem; color: #6b7280; margin-top: 3px; }
+
+    .chart-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 24px;
+    }
+    .chart-card h6 { font-size: 0.78rem; color: #9ca3af; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 16px; }
+
+    /* Skeleton */
+    .skel {
+        background: linear-gradient(90deg,
+            rgba(255,255,255,0.04) 25%,
+            rgba(255,255,255,0.09) 50%,
+            rgba(255,255,255,0.04) 75%);
+        background-size: 200% 100%;
+        animation: shim 1.4s infinite;
+        border-radius: 6px;
+    }
+    @@keyframes shim {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .top-track-row {
+        display: flex; align-items: center; gap: 12px;
+        padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        cursor: pointer;
+    }
+    .top-track-row:last-child { border-bottom: none; }
+    .top-track-row .rank { color: #6366f1; font-weight: 700; font-size: 0.85rem; width: 20px; flex-shrink: 0; text-align: center; }
+    .top-track-row .cover { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: #1f2937; }
+    .top-track-row .info { flex: 1; min-width: 0; }
+    .top-track-row .info .title  { font-size: 0.82rem; color: #e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-track-row .info .artist { font-size: 0.72rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-track-row .count { font-size: 0.75rem; color: #6366f1; font-weight: 600; flex-shrink: 0; }
+
+    .empty-state { text-align:center; padding:60px 20px; color:#4b5563; }
+</style>
+}
+
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+
+        <!-- Baþlýk -->
+        <div class="heading pt-4 pb-2">
+            <div>
+                <h4 class="text-highlight">Ýstatistikler</h4>
+                <p class="text-muted" style="font-size:0.85rem;">Platform genelindeki müzik dinleme verilerini incele.</p>
+            </div>
+        </div>
+
+        <!-- Giriþ yok -->
+        <div id="notLoggedIn" class="empty-state" style="display:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor" stroke-width="1.2" style="opacity:.35;">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            <p style="font-size:1rem;color:#6b7280;margin:12px 0;">Ýstatistikleri görmek için giriþ yap.</p>
+            <a asp-controller="Home" asp-action="SignIn"
+               class="btn btn-rounded gd-primary text-white mt-2">Giriþ Yap</a>
+        </div>
+
+        <!-- Ana içerik (giriþ yapýlmýþsa gösterilir) -->
+        <div id="statsContent" style="display:none;">
+
+            <!-- ?? Özet Kartlar ?? -->
+            <div class="row mb-4" id="summaryCards">
+                <!-- Skeleton -->
+                <div class="col-6 col-md-3 mb-3 skel-card">
+                    <div class="stat-card"><div class="skel" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;"></div><div style="flex:1;"><div class="skel" style="height:28px;width:60%;margin-bottom:6px;"></div><div class="skel" style="height:12px;width:80%;"></div></div></div>
+                </div>
+                <div class="col-6 col-md-3 mb-3 skel-card">
+                    <div class="stat-card"><div class="skel" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;"></div><div style="flex:1;"><div class="skel" style="height:28px;width:60%;margin-bottom:6px;"></div><div class="skel" style="height:12px;width:80%;"></div></div></div>
+                </div>
+                <div class="col-6 col-md-3 mb-3 skel-card">
+                    <div class="stat-card"><div class="skel" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;"></div><div style="flex:1;"><div class="skel" style="height:28px;width:60%;margin-bottom:6px;"></div><div class="skel" style="height:12px;width:80%;"></div></div></div>
+                </div>
+                <div class="col-6 col-md-3 mb-3 skel-card">
+                    <div class="stat-card"><div class="skel" style="width:48px;height:48px;border-radius:12px;flex-shrink:0;"></div><div style="flex:1;"><div class="skel" style="height:28px;width:60%;margin-bottom:6px;"></div><div class="skel" style="height:12px;width:80%;"></div></div></div>
+                </div>
+            </div>
+
+            <!-- ?? Grafikler + Top Listesi ?? -->
+            <div class="row mb-4">
+
+                <!-- Haftalýk dinleme çubuk grafiði -->
+                <div class="col-md-7 mb-4">
+                    <div class="chart-card h-100">
+                        <h6>Haftalýk Dinleme Aktivitesi</h6>
+                        <canvas id="weeklyChart" height="220"></canvas>
+                    </div>
+                </div>
+
+                <!-- En çok dinlenen sanatçýlar — pasta grafik -->
+                <div class="col-md-5 mb-4">
+                    <div class="chart-card h-100">
+                        <h6>En Çok Dinlenen Sanatçýlar</h6>
+                        <canvas id="artistChart" height="220"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ?? Top Þarkýlar + Günlük trend çizgi grafiði ?? -->
+            <div class="row">
+
+                <!-- Top 10 þarký listesi -->
+                <div class="col-md-5 mb-4">
+                    <div class="chart-card">
+                        <h6>En Çok Çalýnan Þarkýlar</h6>
+                        <div id="topTracksList"></div>
+                    </div>
+                </div>
+
+                <!-- Günlük trend çizgi grafiði -->
+                <div class="col-md-7 mb-4">
+                    <div class="chart-card">
+                        <h6>Son 30 Günlük Dinleme Trendi</h6>
+                        <canvas id="trendChart" height="220"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /statsContent -->
+
+    </div>
+</div>
+
+@section Scripts {
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    /* ?? Yardýmcý ?? */
+    function esc(v) {
+        return String(v || '')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ?? Chart.js global tema ?? */
+    Chart.defaults.color = '#6b7280';
+    Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+    Chart.defaults.font.family = 'inherit';
+
+    var weeklyChartInst = null;
+    var artistChartInst = null;
+    var trendChartInst  = null;
+
+    function destroyCharts() {
+        if (weeklyChartInst) { weeklyChartInst.destroy(); weeklyChartInst = null; }
+        if (artistChartInst) { artistChartInst.destroy(); artistChartInst = null; }
+        if (trendChartInst)  { trendChartInst.destroy();  trendChartInst  = null; }
+    }
+
+    /* ?? Renk paleti ?? */
+    var PALETTE = ['#6366f1','#818cf8','#a5b4fc','#34d399','#fbbf24','#f87171','#38bdf8','#fb923c','#a78bfa','#4ade80'];
+
+    /* ?? Son N günün etiketlerini üret ?? */
+    function lastDays(n) {
+        var labels = [];
+        for (var i = n - 1; i >= 0; i--) {
+            var d = new Date();
+            d.setDate(d.getDate() - i);
+            labels.push(d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }));
+        }
+        return labels;
+    }
+
+    /* ?? Gün indexine göre history daðýt (son 7 gün için) ?? */
+    function groupByDay(items, days) {
+        var counts = new Array(days).fill(0);
+        var now = Date.now();
+        items.forEach(function (item) {
+            var ds = String(item.playedAt || '');
+            if (!ds.endsWith('Z') && !ds.includes('+')) ds += 'Z';
+            var diff = Math.floor((now - new Date(ds)) / 86400000);
+            if (diff >= 0 && diff < days) counts[days - 1 - diff]++;
+        });
+        return counts;
+    }
+
+    /* ?? Gün indexine göre history daðýt (son 30 gün için) ?? */
+    function groupByDay30(items) {
+        return groupByDay(items, 30);
+    }
+
+    /* ?? Top sanatçý sayýmý ?? */
+    function topArtists(items, limit) {
+        var map = {};
+        items.forEach(function (it) {
+            var a = it.artistName || 'Bilinmeyen';
+            map[a] = (map[a] || 0) + 1;
+        });
+        return Object.entries(map)
+            .sort(function (a, b) { return b[1] - a[1]; })
+            .slice(0, limit);
+    }
+
+    /* ?? Top þarký sayýmý ?? */
+    function topSongs(items, limit) {
+        var map = {};
+        items.forEach(function (it) {
+            var key = (it.songId || 0) + '|' + (it.songTitle || '—') + '|' + (it.artistName || '—') + '|' + (it.artistImageUrl || '');
+            map[key] = (map[key] || 0) + 1;
+        });
+        return Object.entries(map)
+            .sort(function (a, b) { return b[1] - a[1]; })
+            .slice(0, limit)
+            .map(function (e) {
+                var parts = e[0].split('|');
+                return { songId: parts[0], title: parts[1], artist: parts[2], cover: parts[3], count: e[1] };
+            });
+    }
+
+    /* ?? Özet kartlarý oluþtur ?? */
+    function renderCards(data, items) {
+        var totalPlays    = data.totalPlays    || items.length;
+        var uniqueSongs   = data.uniqueSongs   || new Set(items.map(function (d) { return d.songId; })).size;
+        var uniqueArtists = data.uniqueArtists || new Set(items.map(function (d) { return d.artistName; })).size;
+
+        // Bugünkü dinleme sayýsý (her zaman items'tan hesapla — server bunu ayrý vermiyor)
+        var today = new Date(); today.setHours(0,0,0,0);
+        var todayCount = items.filter(function (it) {
+            var ds = String(it.playedAt || '');
+            if (!ds.endsWith('Z') && !ds.includes('+')) ds += 'Z';
+            return new Date(ds) >= today;
+        }).length;
+
+        var cardsData = [
+            { icon: 'headphones', color: '#6366f1', bg: 'rgba(99,102,241,0.15)', num: totalPlays,    lbl: 'Toplam Dinleme' },
+            { icon: 'music',      color: '#34d399', bg: 'rgba(52,211,153,0.15)',  num: uniqueSongs,   lbl: 'Farklý Þarký'  },
+            { icon: 'user',       color: '#fbbf24', bg: 'rgba(251,191,36,0.15)', num: uniqueArtists, lbl: 'Farklý Sanatçý'},
+            { icon: 'sun',        color: '#f87171', bg: 'rgba(248,113,113,0.15)',num: todayCount,    lbl: 'Bugün Dinlendi' }
+        ];
+
+        var container = document.getElementById('summaryCards');
+        container.innerHTML = '';
+        cardsData.forEach(function (c) {
+            container.innerHTML +=
+                '<div class="col-6 col-md-3 mb-3">' +
+                  '<div class="stat-card">' +
+                    '<div class="icon-wrap" style="background:' + c.bg + ';">' +
+                      '<i data-feather="' + c.icon + '" style="color:' + c.color + ';width:22px;height:22px;"></i>' +
+                    '</div>' +
+                    '<div>' +
+                      '<div class="num">' + c.num + '</div>' +
+                      '<div class="lbl">' + c.lbl + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+        });
+        if (typeof feather !== 'undefined') feather.replace({ width: 22, height: 22 });
+    }
+
+    /* ?? Haftalýk çubuk grafik ?? */
+    function renderWeeklyChart(items) {
+        var labels = lastDays(7);
+        var data   = groupByDay(items, 7);
+        var ctx = document.getElementById('weeklyChart').getContext('2d');
+        weeklyChartInst = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Dinleme',
+                    data: data,
+                    backgroundColor: 'rgba(99,102,241,0.7)',
+                    borderColor: '#6366f1',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    hoverBackgroundColor: '#818cf8'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+    }
+
+    /* ?? Sanatçý pasta grafik ?? */
+    function renderArtistChart(items) {
+        var artists = topArtists(items, 6);
+        if (!artists.length) return;
+        var labels = artists.map(function (a) { return a[0]; });
+        var data   = artists.map(function (a) { return a[1]; });
+        var ctx = document.getElementById('artistChart').getContext('2d');
+        artistChartInst = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: PALETTE.slice(0, labels.length),
+                    borderColor: 'rgba(0,0,0,0.3)',
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '60%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 12, boxWidth: 12, font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+
+    /* ?? 30 günlük trend çizgi grafiði ?? */
+    function renderTrendChart(items) {
+        var labels = lastDays(30);
+        var data   = groupByDay30(items);
+        var ctx = document.getElementById('trendChart').getContext('2d');
+        trendChartInst = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Dinleme',
+                    data: data,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99,102,241,0.12)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    fill: true,
+                    tension: 0.35
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        ticks: { maxTicksLimit: 8, maxRotation: 0 },
+                        grid:  { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+    }
+
+    /* ?? Top þarký listesi ?? */
+    function renderTopTracks(items) {
+        var songs = topSongs(items, 10);
+        var container = document.getElementById('topTracksList');
+        if (!songs.length) {
+            container.innerHTML = '<p class="text-muted" style="font-size:0.82rem;">Henüz veri yok.</p>';
+            return;
+        }
+        var html = '';
+        songs.forEach(function (s, i) {
+            var cover = esc(s.cover || '/bepop/assets/img/c0.jpg');
+            html +=
+                '<div class="top-track-row" onclick="playSong(' + parseInt(s.songId) + ')">' +
+                  '<span class="rank">' + (i + 1) + '</span>' +
+                  '<img class="cover" src="' + cover + '" alt="' + esc(s.title) + '"' +
+                       ' onerror="this.src=\'/bepop/assets/img/c0.jpg\'">' +
+                  '<div class="info">' +
+                    '<div class="title">' + esc(s.title) + '</div>' +
+                    '<div class="artist">' + esc(s.artist) + '</div>' +
+                  '</div>' +
+                  '<span class="count">' + s.count + 'x</span>' +
+                '</div>';
+        });
+        container.innerHTML = html;
+    }
+
+    /* ?? Ana init fonksiyonu ?? */
+    function initStatisticsPage() {
+        var token      = localStorage.getItem('jwtToken');
+        var notLogged  = document.getElementById('notLoggedIn');
+        var content    = document.getElementById('statsContent');
+
+        if (!content) return;
+
+        destroyCharts();
+
+        function show(el) { if (el) el.style.display = ''; }
+        function hide(el) { if (el) el.style.display = 'none'; }
+
+        hide(notLogged);
+        hide(content);
+
+        if (!token) {
+            show(notLogged);
+            if (typeof feather !== 'undefined') feather.replace();
+            return;
+        }
+
+        show(content);
+
+        fetch('/api/usersonghistories', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+        .then(function (res) {
+            if (res.status === 401) {
+                localStorage.removeItem('jwtToken');
+                hide(content);
+                show(notLogged);
+                return null;
+            }
+            if (!res.ok) return null;
+            return res.json();
+        })
+        .then(function (data) {
+            if (!data) return;
+
+            var items = data.items || data;
+            if (!Array.isArray(items)) items = [];
+
+            renderCards(data, items);
+            renderWeeklyChart(items);
+            renderArtistChart(items);
+            renderTrendChart(items);
+            renderTopTracks(items);
+
+            if (typeof feather !== 'undefined') feather.replace({ width: 22, height: 22 });
+        })
+        .catch(function (err) {
+            console.error('Statistics fetch error:', err);
+        });
+    }
+
+    initStatisticsPage();
+    window._pageInitRan = true;
+    window.pageInit = initStatisticsPage;
+})();
+</script>
+}

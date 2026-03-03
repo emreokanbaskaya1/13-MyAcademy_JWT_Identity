@@ -60,6 +60,16 @@
                             <span class="nav-text">Packages</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Statistics" class="nav-link">
+                            <span class="nav-text">Statistics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Recommendations" class="nav-link">
+                            <span class="nav-text">Recommendations</span>
+                        </a>
+                    </li>
                 </ul>
                 <form class="input-group m-2 my-lg-0">
                     <span class="input-group-prepend">
@@ -175,9 +185,83 @@
             </div>
         </div>
         <!-- Player -->
-        <div data-plugin="plyr" class="plyrist plyrist_audio plyr-list-popup player bg-overlay b-t fixed-bottom" id="plyrist">
+        <div data-plugin="plyr" class="plyrist plyrist_audio plyr-list-popup player bg-overlay b-t fixed-bottom" id="plyrist" style="display:none!important;">
             <audio controls hidden></audio>
             <div class="plyr-list bg-dark-overlay" style="display:none"></div>
+        </div>
+
+        <!-- Custom Player Bar -->
+        <div id="bepop-player-bar" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:1050;
+             background:linear-gradient(90deg,#0f0f1a 0%,#1a1a2e 100%);
+             border-top:1px solid rgba(99,102,241,0.25);
+             height:64px; align-items:center; padding:0 24px; gap:16px;">
+
+            <!-- Cover art -->
+            <div id="bp-cover" style="width:42px;height:42px;border-radius:6px;background-color:#1f2937;flex-shrink:0;
+                 background-size:cover;background-position:center;background-image:none;"></div>
+
+            <!-- Song info -->
+            <div style="display:flex;flex-direction:column;justify-content:center;min-width:0;width:180px;flex-shrink:0;">
+                <span id="bp-title" style="color:#fff;font-size:0.82rem;font-weight:600;
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+                <span id="bp-artist" style="color:#6b7280;font-size:0.72rem;
+                      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+            </div>
+
+            <!-- Controls -->
+            <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
+                <!-- Prev -->
+                <button id="bp-prev" title="Önceki" style="background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px;line-height:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="2" height="16"/>
+                    </svg>
+                </button>
+
+                <!-- Play / Pause -->
+                <button id="bp-playpause" title="Oynat / Duraklat"
+                        style="width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+                               background:linear-gradient(135deg,#6366f1,#818cf8);
+                               display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <!-- Play icon (default) -->
+                    <svg id="bp-icon-play" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
+                        <polygon points="5,3 19,12 5,21"/>
+                    </svg>
+                    <!-- Pause icon (hidden by default) -->
+                    <svg id="bp-icon-pause" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white" style="display:none;">
+                        <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+                    </svg>
+                </button>
+
+                <!-- Next -->
+                <button id="bp-next" title="Sonraki" style="background:none;border:none;color:#9ca3af;cursor:pointer;padding:4px;line-height:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5,4 15,12 5,20"/><rect x="17" y="4" width="2" height="16"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Progress bar -->
+            <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
+                <span id="bp-current" style="color:#6b7280;font-size:0.72rem;flex-shrink:0;width:36px;text-align:right;">0:00</span>
+                <div id="bp-progress-wrap" style="flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;cursor:pointer;position:relative;">
+                    <div id="bp-progress-fill" style="height:100%;background:#6366f1;border-radius:2px;width:0%;transition:width .1s linear;"></div>
+                </div>
+                <span id="bp-duration" style="color:#6b7280;font-size:0.72rem;flex-shrink:0;width:36px;">0:00</span>
+            </div>
+
+            <!-- Volume -->
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                </svg>
+                <input id="bp-volume" type="range" min="0" max="1" step="0.05" value="1"
+                       style="width:72px;accent-color:#6366f1;cursor:pointer;">
+            </div>
+
+            <!-- Hidden audio element -->
+            <audio id="bp-audio" style="display:none;"></audio>
         </div>
     </footer>
 
@@ -194,37 +278,76 @@
     <script src="/bepop/libs/slick-carousel/slick/slick.min.js"></script>
     <script src="/bepop/libs/feather-icons/dist/feather.min.js"></script>
     <script src="/bepop/assets/js/theme.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Package-gated player -->
+    <script src="/js/player.js?v=2"></script>
+    @RenderSection("Scripts", required: false)
     <script>
-        // Auth UI Management - Run only once
-        (function() {
-            if (window.authUIInitialized) {
-                console.log('Auth UI already initialized, skipping...');
-                return;
+        // Re-initialize plugins after each PJAX load
+        function reinitPlugins() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
             }
+            if (typeof $.fn !== 'undefined' && typeof $.fn.slick !== 'undefined') {
+                $('.slick-initialized').each(function () {
+                    $(this).slick('unslick');
+                });
+            }
+            if (typeof App !== 'undefined' && typeof App.init === 'function') {
+                App.init();
+            }
+        }
+
+        // PJAX: Re-execute inline scripts in the newly swapped #content, then call
+        // window.pageInit if it was not already invoked by the script itself.
+        $(document).on('pjaxEnd', function () {
+            // Each page's @@section Scripts block sets window.pageInit AND immediately
+            // calls init. Re-running those scripts here ensures window.pageInit is
+            // up to date AND the init runs for the incoming page.
+            window.pageInit = null;
+            $('#content script').each(function () {
+                try { eval(this.innerHTML); } catch (e) { console.error('pjaxEnd script eval error:', e); }
+            });
+
+            // Fallback: if the script set pageInit but did not auto-invoke it
+            if (typeof window.pageInit === 'function') {
+                // The IIFE already called init; calling again would double-fetch.
+                // Only call if the script did NOT self-invoke (guard via flag).
+                if (!window._pageInitRan) {
+                    window.pageInit();
+                }
+            }
+            window._pageInitRan = false;
+
+            reinitPlugins();
+            if (typeof updateAuthUI === 'function') updateAuthUI();
+        });
+
+        // Auth UI Management - Run only once
+        (function () {
+            if (window.authUIInitialized) return;
             window.authUIInitialized = true;
-            
-            console.log('Auth UI Script loaded');
-            
-            function updateAuthUI() {
+
+            window.updateAuthUI = function () {
                 var token = localStorage.getItem('jwtToken');
+                console.log('Auth UI Script loaded');
                 console.log('Token:', token ? 'EXISTS' : 'NOT FOUND');
-                
-                var userMenu    = document.getElementById('userMenu');
-                var loginLink   = document.getElementById('loginLink');
+
+                var userMenu     = document.getElementById('userMenu');
+                var loginLink    = document.getElementById('loginLink');
                 var registerLink = document.getElementById('registerLink');
-                
-                if (userMenu) userMenu.classList.remove('auth-show');
-                if (loginLink) loginLink.classList.remove('auth-show');
+
+                if (userMenu)     userMenu.classList.remove('auth-show');
+                if (loginLink)    loginLink.classList.remove('auth-show');
                 if (registerLink) registerLink.classList.remove('auth-show');
-                
+
                 if (token) {
                     if (userMenu) userMenu.classList.add('auth-show');
-
-                    // Parse JWT and fill dropdown info
                     try {
-                        var payload = JSON.parse(atob(token.split('.')[1]));
+                        var payload  = JSON.parse(atob(token.split('.')[1]));
                         var userName = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
-                                    || payload['unique_name'] || payload['name'] || '';
+                                     || payload['unique_name'] || payload['name'] || '';
                         var pkgName  = payload['PackageName'] || payload['packageName'] || 'Free';
 
                         var navUser  = document.getElementById('navUsername');
@@ -236,32 +359,25 @@
                         if (dropPkg)  dropPkg.textContent  = pkgName + ' Paketi';
                     } catch (e) {}
                 } else {
-                    if (loginLink) loginLink.classList.add('auth-show');
+                    if (loginLink)    loginLink.classList.add('auth-show');
                     if (registerLink) registerLink.classList.add('auth-show');
                 }
-            }
-            
-            // Run immediately
+            };
+
             updateAuthUI();
-            
-            // Logout functionality
-            window.addEventListener('load', function() {
+
+            window.addEventListener('load', function () {
                 var logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function(e) {
+                    logoutBtn.addEventListener('click', function (e) {
                         e.preventDefault();
                         localStorage.removeItem('jwtToken');
                         window.location.href = '/Home/SignIn';
                     });
                 }
-                
-                // Feather icons
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
+                if (typeof feather !== 'undefined') feather.replace();
             });
         })();
     </script>
-    @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -20,8 +20,8 @@ var MODULE_CONFIG = {
         '/bepop/assets/js/plugins/typeahead.js'
     ],
     plyr: [
-        '/bepop/libs/plyr/dist/plyr.js/plyr.polyfilled.js',
-        '/bepop/libs/plyrist/src/plyrist.scss/plyrist.css',
+        '/bepop/libs/plyr/dist/plyr.polyfilled.js',
+        '/bepop/libs/plyrist/src/plyrist.css',
         '/bepop/libs/plyrist/src/plyrist.js',
         '/bepop/assets/js/plugins/plyr.js',
     ]

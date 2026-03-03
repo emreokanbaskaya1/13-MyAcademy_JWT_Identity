@@ -15,6 +15,7 @@ namespace _13_MyAcademy_JWT_Identity.DTOs
         public string SongTitle { get; set; } = string.Empty;
         public string ArtistName { get; set; } = string.Empty;
         public string AlbumTitle { get; set; } = string.Empty;
+        public string? CoverImageUrl { get; set; }
         public string? ArtistImageUrl { get; set; }
         public DateTime PlayedAt { get; set; }
     }

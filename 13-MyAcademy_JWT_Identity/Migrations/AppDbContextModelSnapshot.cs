@@ -657,6 +657,9 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PackageId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -664,6 +667,8 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AlbumId");
+
+                    b.HasIndex("PackageId");
 
                     b.ToTable("Songs");
 
@@ -675,6 +680,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 234,
                             FilePath = "songs/simarik.mp3",
+                            PackageId = 6,
                             Title = "Şımarık"
                         },
                         new
@@ -684,6 +690,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 258,
                             FilePath = "songs/kuzukuzu.mp3",
+                            PackageId = 5,
                             Title = "Kuzu Kuzu"
                         },
                         new
@@ -693,6 +700,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 245,
                             FilePath = "songs/dudu.mp3",
+                            PackageId = 4,
                             Title = "Dudu"
                         },
                         new
@@ -702,6 +710,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 3,
                             DurationInSeconds = 300,
                             FilePath = "songs/gulumse.mp3",
+                            PackageId = 3,
                             Title = "Gülümse"
                         },
                         new
@@ -711,6 +720,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 2,
                             DurationInSeconds = 275,
                             FilePath = "songs/hadibakalim.mp3",
+                            PackageId = 2,
                             Title = "Hadi Bakalım"
                         },
                         new
@@ -720,6 +730,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 1,
                             DurationInSeconds = 312,
                             FilePath = "songs/gesibaglari.mp3",
+                            PackageId = 1,
                             Title = "Gesi Bağları"
                         },
                         new
@@ -729,6 +740,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 290,
                             FilePath = "songs/donence.mp3",
+                            PackageId = 6,
                             Title = "Dönence"
                         },
                         new
@@ -738,6 +750,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 267,
                             FilePath = "songs/allabeni.mp3",
+                            PackageId = 4,
                             Title = "Alla Beni Pulla Beni"
                         },
                         new
@@ -747,6 +760,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 215,
                             FilePath = "songs/bounce.mp3",
+                            PackageId = 5,
                             Title = "Bounce"
                         },
                         new
@@ -756,6 +770,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 225,
                             FilePath = "songs/dedikodu.mp3",
+                            PackageId = 4,
                             Title = "Dedikodu"
                         },
                         new
@@ -765,6 +780,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 3,
                             DurationInSeconds = 198,
                             FilePath = "songs/superstar.mp3",
+                            PackageId = 3,
                             Title = "Superstar"
                         },
                         new
@@ -774,6 +790,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 210,
                             FilePath = "songs/bambaska.mp3",
+                            PackageId = 6,
                             Title = "Bambaşka Biri"
                         },
                         new
@@ -783,6 +800,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 2,
                             DurationInSeconds = 245,
                             FilePath = "songs/tamirci.mp3",
+                            PackageId = 2,
                             Title = "Tamirci Çırağı"
                         },
                         new
@@ -792,6 +810,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 1,
                             DurationInSeconds = 280,
                             FilePath = "songs/resimdeki.mp3",
+                            PackageId = 1,
                             Title = "Resimdeki Gözyaşları"
                         },
                         new
@@ -801,6 +820,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 235,
                             FilePath = "songs/istanbul.mp3",
+                            PackageId = 4,
                             Title = "İstanbul'da Sonbahar"
                         },
                         new
@@ -810,6 +830,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 205,
                             FilePath = "songs/papatya.mp3",
+                            PackageId = 5,
                             Title = "Papatya"
                         },
                         new
@@ -819,6 +840,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 3,
                             DurationInSeconds = 180,
                             FilePath = "songs/everyway.mp3",
+                            PackageId = 3,
                             Title = "Every Way That I Can"
                         },
                         new
@@ -828,6 +850,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 220,
                             FilePath = "songs/leave.mp3",
+                            PackageId = 6,
                             Title = "Leave"
                         },
                         new
@@ -837,6 +860,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 178,
                             FilePath = "songs/dumtek.mp3",
+                            PackageId = 6,
                             Title = "Düm Tek Tek"
                         },
                         new
@@ -846,6 +870,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 195,
                             FilePath = "songs/superman.mp3",
+                            PackageId = 4,
                             Title = "Superman"
                         },
                         new
@@ -855,6 +880,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 310,
                             FilePath = "songs/kagithelva.mp3",
+                            PackageId = 5,
                             Title = "Kâğıt Helva"
                         },
                         new
@@ -864,6 +890,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 3,
                             DurationInSeconds = 285,
                             FilePath = "songs/affet.mp3",
+                            PackageId = 3,
                             Title = "Affet"
                         },
                         new
@@ -873,6 +900,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 2,
                             DurationInSeconds = 248,
                             FilePath = "songs/holocaust.mp3",
+                            PackageId = 2,
                             Title = "Holocaust"
                         },
                         new
@@ -882,6 +910,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 230,
                             FilePath = "songs/neyimvarki.mp3",
+                            PackageId = 6,
                             Title = "Neyim Var Ki"
                         },
                         new
@@ -891,6 +920,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 256,
                             FilePath = "songs/sendendahaguzel.mp3",
+                            PackageId = 4,
                             Title = "Senden Daha Güzel"
                         },
                         new
@@ -900,6 +930,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 242,
                             FilePath = "songs/yurekten.mp3",
+                            PackageId = 6,
                             Title = "Yürekten"
                         },
                         new
@@ -909,6 +940,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 1,
                             DurationInSeconds = 268,
                             FilePath = "songs/baytar.mp3",
+                            PackageId = 1,
                             Title = "Baytar"
                         },
                         new
@@ -918,6 +950,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 295,
                             FilePath = "songs/dusunki.mp3",
+                            PackageId = 5,
                             Title = "Düşün Ki"
                         },
                         new
@@ -927,6 +960,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 218,
                             FilePath = "songs/cambaz.mp3",
+                            PackageId = 6,
                             Title = "Cambaz"
                         },
                         new
@@ -936,6 +970,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 3,
                             DurationInSeconds = 240,
                             FilePath = "songs/dunyayalan.mp3",
+                            PackageId = 3,
                             Title = "Dünya Yalan Söylüyor"
                         },
                         new
@@ -945,6 +980,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 230,
                             FilePath = "songs/dunyadonuyor.mp3",
+                            PackageId = 4,
                             Title = "Dünya Dönüyor"
                         },
                         new
@@ -954,6 +990,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 255,
                             FilePath = "songs/geceler.mp3",
+                            PackageId = 6,
                             Title = "Geceler"
                         },
                         new
@@ -963,6 +1000,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 220,
                             FilePath = "songs/ellerinesaglik.mp3",
+                            PackageId = 5,
                             Title = "Ellerine Sağlık"
                         },
                         new
@@ -972,6 +1010,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 2,
                             DurationInSeconds = 238,
                             FilePath = "songs/asklaftan.mp3",
+                            PackageId = 2,
                             Title = "Aşk Laftan Anlamaz"
                         },
                         new
@@ -981,6 +1020,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 252,
                             FilePath = "songs/boylekahpe.mp3",
+                            PackageId = 6,
                             Title = "Böyle Kahpedir Dünya"
                         },
                         new
@@ -990,6 +1030,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 3,
                             DurationInSeconds = 227,
                             FilePath = "songs/durmayagmur.mp3",
+                            PackageId = 3,
                             Title = "Durma Yağmur Durma"
                         },
                         new
@@ -999,6 +1040,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 4,
                             DurationInSeconds = 210,
                             FilePath = "songs/elegunekarsi.mp3",
+                            PackageId = 4,
                             Title = "Ele Güne Karşı"
                         },
                         new
@@ -1008,6 +1050,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 6,
                             DurationInSeconds = 198,
                             FilePath = "songs/alidesidero.mp3",
+                            PackageId = 6,
                             Title = "Ali Desidero"
                         },
                         new
@@ -1017,6 +1060,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 1,
                             DurationInSeconds = 235,
                             FilePath = "songs/dunyaninsonu.mp3",
+                            PackageId = 1,
                             Title = "Dünyanın Sonuna Doğmuşum"
                         },
                         new
@@ -1026,6 +1070,7 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                             ContentLevel = 5,
                             DurationInSeconds = 248,
                             FilePath = "songs/birkadin.mp3",
+                            PackageId = 5,
                             Title = "Bir Kadın Çizeceksin"
                         });
                 });
@@ -1136,7 +1181,15 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("_13_MyAcademy_JWT_Identity.Entities.Package", "Package")
+                        .WithMany("Songs")
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Album");
+
+                    b.Navigation("Package");
                 });
 
             modelBuilder.Entity("_13_MyAcademy_JWT_Identity.Entities.UserSongHistory", b =>
@@ -1175,6 +1228,8 @@ namespace _13_MyAcademy_JWT_Identity.Migrations
 
             modelBuilder.Entity("_13_MyAcademy_JWT_Identity.Entities.Package", b =>
                 {
+                    b.Navigation("Songs");
+
                     b.Navigation("Users");
                 });
 

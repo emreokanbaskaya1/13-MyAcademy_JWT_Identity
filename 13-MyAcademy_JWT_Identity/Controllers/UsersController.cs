@@ -131,6 +131,7 @@ namespace _13_MyAcademy_JWT_Identity.Controllers
                     SongTitle = h.Song.Title,
                     ArtistName = h.Song.Album.Artist.Name,
                     AlbumTitle = h.Song.Album.Title,
+                    CoverImageUrl = h.Song.Album.CoverImageUrl,
                     ArtistImageUrl = h.Song.Album.Artist.ImageUrl,
                     PlayedAt = h.PlayedAt
                 })
