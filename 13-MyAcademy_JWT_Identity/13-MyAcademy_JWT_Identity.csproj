@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Bepop\docs\" />
+    <Folder Include="Bepop\html\" />
     <Folder Include="Bepop\libs\plyrist\dist\" />
   </ItemGroup>
 
